@@ -24,6 +24,7 @@ import ExpenseBreakdownChart from '@/components/dashboard/expense-breakdown-char
 import Alerts from '@/components/dashboard/alerts';
 import PriceSimulator from '@/components/dashboard/price-simulator';
 import { SewingMachineIcon } from '@/components/icons/sewing-machine-icon';
+import BottomNavbar from '@/components/dashboard/bottom-navbar';
 
 export default function DashboardPage() {
   return (
@@ -82,7 +83,7 @@ export default function DashboardPage() {
       </Sidebar>
       <SidebarInset>
         <Header />
-        <main className="flex-1 space-y-6 p-4 md:p-8 pt-6">
+        <main className="flex-1 space-y-6 p-4 md:p-8 pt-6 mb-20 md:mb-0">
           <FinancialSummary />
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-7">
             <div className="lg:col-span-4">
@@ -104,6 +105,7 @@ export default function DashboardPage() {
              </div>
            </div>
         </main>
+        <BottomNavbar />
       </SidebarInset>
     </SidebarProvider>
   );
