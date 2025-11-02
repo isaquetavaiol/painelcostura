@@ -33,7 +33,7 @@ export default function DashboardPage() {
   return (
     <div className="flex min-h-screen w-full flex-col">
       <Header />
-      <main className="flex-1 space-y-6 p-4 md:p-8 pt-6 mb-20 md:mb-0">
+      <main className="flex-1 space-y-6 p-4 md:p-8 pt-6 mb-24">
         <FinancialSummary />
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-7">
           <div className="lg:col-span-4">
