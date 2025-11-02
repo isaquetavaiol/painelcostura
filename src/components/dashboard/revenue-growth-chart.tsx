@@ -67,7 +67,7 @@ const RevenueGrowthChart = () => {
           ) : (
             <AreaChart
               data={chartData}
-              margin={{ top: 5, right: 10, left: -20, bottom: 0 }}
+              margin={{ top: 5, right: 10, left: 0, bottom: 0 }}
             >
               <CartesianGrid vertical={false} strokeDasharray="3 3" />
               <XAxis
@@ -82,6 +82,7 @@ const RevenueGrowthChart = () => {
                 tickLine={false}
                 axisLine={false}
                 tickMargin={8}
+                width={80}
               />
               <ChartTooltip cursor={false} content={<ChartTooltipContent indicator="dot" />} />
               <Area
