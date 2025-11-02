@@ -4,13 +4,13 @@ import { Toaster } from "@/components/ui/toaster"
 import { FirebaseClientProvider } from '@/firebase/client-provider';
 
 export const metadata: Metadata = {
-  title: 'Atelier Insights',
-  description: 'Painel Financeiro para Ateliês de Costura',
+  title: 'Painel Custura',
+  description: 'Gestão profissional para costureiras.',
   manifest: '/manifest.json',
   appleWebApp: {
     capable: true,
     statusBarStyle: 'black-translucent',
-    title: 'Atelier Insights',
+    title: 'Painel Custura',
   },
 };
 
