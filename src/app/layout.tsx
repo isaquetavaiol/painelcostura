@@ -6,6 +6,12 @@ import { FirebaseClientProvider } from '@/firebase/client-provider';
 export const metadata: Metadata = {
   title: 'Atelier Insights',
   description: 'Painel Financeiro para Ateliês de Costura',
+  manifest: '/manifest.json',
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: 'black-translucent',
+    title: 'Atelier Insights',
+  },
 };
 
 export default function RootLayout({
@@ -19,6 +25,7 @@ export default function RootLayout({
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+        <meta name="theme-color" content="#1C1D21" />
       </head>
       <body className="font-body antialiased">
         <FirebaseClientProvider>

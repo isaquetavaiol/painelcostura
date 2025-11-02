@@ -31,18 +31,18 @@ export default function DashboardPage() {
     <div className="flex min-h-screen w-full flex-col">
       <main className="flex-1 space-y-6 p-4 md:p-8 pt-6 mb-28">
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-7">
-          <div className="lg:col-span-4">
+          <div className="lg:col-span-4 md:col-span-1">
             <ServiceProfitChart />
           </div>
-          <div className="lg:col-span-3">
+          <div className="lg:col-span-3 md:col-span-1">
             <RevenueGrowthChart />
           </div>
         </div>
          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-7">
-           <div className="lg:col-span-3">
+           <div className="lg:col-span-3 md:col-span-1">
              <Alerts />
            </div>
-           <div className="lg:col-span-4">
+           <div className="lg:col-span-4 md:col-span-1">
              <PriceSimulator />
            </div>
          </div>
