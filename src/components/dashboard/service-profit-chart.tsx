@@ -16,16 +16,16 @@ import {
 } from '@/components/ui/chart';
 
 const chartData = [
-  { service: 'Adjustments', profit: 1860.45 },
-  { service: 'Dresses', profit: 3050.80 },
-  { service: 'Custom', profit: 2370.00 },
-  { service: 'Repairs', profit: 890.10 },
-  { service: 'Bridal', profit: 4500.25 },
+  { service: 'Ajustes', profit: 1860.45 },
+  { service: 'Vestidos', profit: 3050.80 },
+  { service: 'Personalizado', profit: 2370.00 },
+  { service: 'Reparos', profit: 890.10 },
+  { service: 'Noivas', profit: 4500.25 },
 ];
 
 const chartConfig = {
   profit: {
-    label: 'Profit',
+    label: 'Lucro',
     color: 'hsl(var(--chart-1))',
   },
 } satisfies ChartConfig;
@@ -34,8 +34,8 @@ const ServiceProfitChart = () => {
   return (
     <Card className="h-full animate-card-in" style={{ animationDelay: '100ms', animationFillMode: 'backwards' }}>
       <CardHeader>
-        <CardTitle>Service Profitability</CardTitle>
-        <CardDescription>Profits from tailoring, dresses, and customizations</CardDescription>
+        <CardTitle>Rentabilidade por Serviço</CardTitle>
+        <CardDescription>Lucros de ajustes, vestidos e personalizações</CardDescription>
       </CardHeader>
       <CardContent>
         <ChartContainer config={chartConfig} className="h-[350px] w-full">
@@ -52,7 +52,7 @@ const ServiceProfitChart = () => {
               axisLine={false}
             />
             <YAxis 
-                tickFormatter={(value) => `$${value/1000}k`}
+                tickFormatter={(value) => `R$${value/1000}k`}
             />
             <ChartTooltip
               cursor={false}

@@ -11,11 +11,11 @@ import { Input } from '@/components/ui/input';
 import { Calculator } from 'lucide-react';
 
 const formSchema = z.object({
-  materialCost: z.coerce.number().min(0, { message: 'Must be a positive number' }),
-  laborTime: z.coerce.number().min(0, { message: 'Must be a positive number' }),
+  materialCost: z.coerce.number().min(0, { message: 'Deve ser um número positivo' }),
+  laborTime: z.coerce.number().min(0, { message: 'Deve ser um número positivo' }),
 });
 
-const HOURLY_RATE = 75; // Atelier's hourly labor rate
+const HOURLY_RATE = 75; // Valor da hora de trabalho do ateliê
 
 const PriceSimulator = () => {
   const [suggestedPrice, setSuggestedPrice] = useState<number | null>(null);
@@ -29,7 +29,7 @@ const PriceSimulator = () => {
   });
 
   function onSubmit(values: z.infer<typeof formSchema>) {
-    const profitMargin = 1.3; // 30% profit margin
+    const profitMargin = 1.3; // 30% de margem de lucro
     const price = (values.materialCost + values.laborTime * HOURLY_RATE) * profitMargin;
     setSuggestedPrice(price);
   }
@@ -37,8 +37,8 @@ const PriceSimulator = () => {
   return (
     <Card className="h-full flex flex-col animate-card-in" style={{ animationDelay: '500ms', animationFillMode: 'backwards' }}>
       <CardHeader>
-        <CardTitle>Price Simulator</CardTitle>
-        <CardDescription>Suggest optimal project prices.</CardDescription>
+        <CardTitle>Simulador de Preços</CardTitle>
+        <CardDescription>Sugira preços ideais para projetos.</CardDescription>
       </CardHeader>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 flex-grow flex flex-col">
@@ -48,9 +48,9 @@ const PriceSimulator = () => {
               name="materialCost"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Material Costs ($)</FormLabel>
+                  <FormLabel>Custos de Material (R$)</FormLabel>
                   <FormControl>
-                    <Input type="number" placeholder="e.g., 50.00" {...field} />
+                    <Input type="number" placeholder="ex: 50,00" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -61,9 +61,9 @@ const PriceSimulator = () => {
               name="laborTime"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Labor Time (hours)</FormLabel>
+                  <FormLabel>Tempo de Trabalho (horas)</FormLabel>
                   <FormControl>
-                    <Input type="number" placeholder="e.g., 4" {...field} />
+                    <Input type="number" placeholder="ex: 4" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -71,21 +71,21 @@ const PriceSimulator = () => {
             />
             {suggestedPrice !== null && (
               <div className="pt-4 text-center">
-                 <p className="text-sm text-muted-foreground">Suggested Price:</p>
+                 <p className="text-sm text-muted-foreground">Preço Sugerido:</p>
                  <p className="text-3xl font-bold text-primary">
-                   {suggestedPrice.toLocaleString('en-US', {
+                   {suggestedPrice.toLocaleString('pt-BR', {
                      style: 'currency',
-                     currency: 'USD',
+                     currency: 'BRL',
                    })}
                  </p>
-                 <p className="text-xs text-muted-foreground">(includes 30% profit margin)</p>
+                 <p className="text-xs text-muted-foreground">(inclui 30% de margem de lucro)</p>
               </div>
             )}
           </CardContent>
           <CardFooter>
             <Button type="submit" className="w-full">
               <Calculator className="mr-2 h-4 w-4" />
-              Calculate Price
+              Calcular Preço
             </Button>
           </CardFooter>
         </form>

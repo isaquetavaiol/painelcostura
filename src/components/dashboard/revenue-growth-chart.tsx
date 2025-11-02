@@ -16,17 +16,17 @@ import {
 } from '@/components/ui/chart';
 
 const chartData = [
-  { month: 'January', growth: 5.2 },
-  { month: 'February', growth: 7.8 },
-  { month: 'March', growth: 6.5 },
-  { month: 'April', growth: 9.1 },
-  { month: 'May', growth: 11.4 },
-  { month: 'June', growth: 10.2 },
+  { month: 'Janeiro', growth: 5.2 },
+  { month: 'Fevereiro', growth: 7.8 },
+  { month: 'Março', growth: 6.5 },
+  { month: 'Abril', growth: 9.1 },
+  { month: 'Maio', growth: 11.4 },
+  { month: 'Junho', growth: 10.2 },
 ];
 
 const chartConfig = {
   growth: {
-    label: 'Growth',
+    label: 'Crescimento',
     color: 'hsl(var(--chart-2))',
   },
 } satisfies ChartConfig;
@@ -35,8 +35,8 @@ const RevenueGrowthChart = () => {
   return (
     <Card className="h-full animate-card-in" style={{ animationDelay: '200ms', animationFillMode: 'backwards' }}>
       <CardHeader>
-        <CardTitle>Revenue Growth</CardTitle>
-        <CardDescription>Month-over-month revenue growth percentage</CardDescription>
+        <CardTitle>Crescimento da Receita</CardTitle>
+        <CardDescription>Percentual de crescimento da receita mês a mês</CardDescription>
       </CardHeader>
       <CardContent>
         <ChartContainer config={chartConfig} className="h-[250px] w-full">

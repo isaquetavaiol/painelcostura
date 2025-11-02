@@ -14,28 +14,28 @@ import {
 const FinancialSummary = () => {
   const summaryData = [
     {
-      title: 'Daily Revenue',
-      value: '$1,895.50',
+      title: 'Receita Diária',
+      value: 'R$1.895,50',
       icon: <CircleDollarSign className="h-6 w-6 text-muted-foreground" />,
-      change: '+15.2% from yesterday',
+      change: '+15.2% desde ontem',
     },
     {
-      title: 'Daily Expenses',
-      value: '$450.75',
+      title: 'Despesas Diárias',
+      value: 'R$450,75',
       icon: <TrendingDown className="h-6 w-6 text-muted-foreground" />,
-      change: '-5.1% from yesterday',
+      change: '-5.1% desde ontem',
     },
     {
-      title: 'Net Profit',
-      value: '$1,444.75',
+      title: 'Lucro Líquido',
+      value: 'R$1.444,75',
       icon: <TrendingUp className="h-6 w-6 text-muted-foreground" />,
-      change: '+20.3% from yesterday',
+      change: '+20.3% desde ontem',
     },
     {
-      title: 'Revenue Forecast',
-      value: '$25,500',
+      title: 'Previsão de Receita',
+      value: 'R$25.500',
       icon: <LineChart className="h-6 w-6 text-muted-foreground" />,
-      change: 'for this month',
+      change: 'para este mês',
     },
   ];
 

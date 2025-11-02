@@ -7,7 +7,7 @@ export default function ProjectsPage() {
     <div className="flex min-h-screen w-full flex-col">
       <Header />
       <main className="flex-1 space-y-6 p-4 md:p-8 pt-6 mb-28">
-        <h1 className="text-3xl font-bold">Projects</h1>
+        <h1 className="text-3xl font-bold">Projetos</h1>
         {/* Page content goes here */}
       </main>
       <BottomNavbar />

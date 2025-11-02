@@ -28,8 +28,8 @@ import { useEffect } from 'react';
 import { Chrome } from 'lucide-react';
 
 const formSchema = z.object({
-  email: z.string().email({ message: 'Invalid email address.' }),
-  password: z.string().min(6, { message: 'Password must be at least 6 characters.' }),
+  email: z.string().email({ message: 'Endereço de e-mail inválido.' }),
+  password: z.string().min(6, { message: 'A senha deve ter pelo menos 6 caracteres.' }),
 });
 
 export default function LoginPage() {
@@ -83,7 +83,7 @@ export default function LoginPage() {
         <CardHeader>
           <CardTitle className="text-2xl">Login</CardTitle>
           <CardDescription>
-            Enter your email below to login to your account
+            Digite seu e-mail abaixo para fazer login em sua conta
           </CardDescription>
         </CardHeader>
         <CardContent className="grid gap-4">
@@ -94,9 +94,9 @@ export default function LoginPage() {
                 name="email"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Email</FormLabel>
+                    <FormLabel>E-mail</FormLabel>
                     <FormControl>
-                      <Input placeholder="m@example.com" {...field} />
+                      <Input placeholder="m@exemplo.com" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -107,7 +107,7 @@ export default function LoginPage() {
                 name="password"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Password</FormLabel>
+                    <FormLabel>Senha</FormLabel>
                     <FormControl>
                       <Input type="password" {...field} />
                     </FormControl>
@@ -127,7 +127,7 @@ export default function LoginPage() {
             </div>
             <div className="relative flex justify-center text-xs uppercase">
               <span className="bg-background px-2 text-muted-foreground">
-                Or continue with
+                Ou continue com
               </span>
             </div>
           </div>
@@ -136,9 +136,9 @@ export default function LoginPage() {
             Google
           </Button>
           <div className="mt-4 text-center text-sm">
-            Don&apos;t have an account?{' '}
+            Não tem uma conta?{' '}
             <Link href="/signup" className="underline">
-              Sign up
+              Inscreva-se
             </Link>
           </div>
         </CardContent>

@@ -7,22 +7,22 @@ const Alerts = () => {
     {
       id: 1,
       icon: <AlertTriangle className="h-4 w-4" />,
-      title: 'Overdue Payment',
-      description: 'Invoice #1034 for J. Doe is 5 days overdue.',
+      title: 'Pagamento Atrasado',
+      description: 'A fatura nº 1034 para J. Doe está 5 dias atrasada.',
       variant: 'destructive',
     },
     {
       id: 2,
       icon: <Target className="h-4 w-4" />,
-      title: 'Target Unmet',
-      description: 'Monthly revenue goal is 85% complete.',
+      title: 'Meta não Atingida',
+      description: 'A meta de receita mensal está 85% concluída.',
       variant: 'default',
     },
     {
       id: 3,
       icon: <AlertTriangle className="h-4 w-4" />,
-      title: 'Low Material Stock',
-      description: 'Silk fabric is running low. Only 2 meters left.',
+      title: 'Estoque Baixo de Material',
+      description: 'O tecido de seda está acabando. Restam apenas 2 metros.',
       variant: 'destructive',
     },
   ];
@@ -30,7 +30,7 @@ const Alerts = () => {
   return (
     <Card className="h-full animate-card-in" style={{ animationDelay: '400ms', animationFillMode: 'backwards' }}>
       <CardHeader>
-        <CardTitle>Alerts</CardTitle>
+        <CardTitle>Alertas</CardTitle>
       </CardHeader>
       <CardContent>
         <div className="space-y-4">

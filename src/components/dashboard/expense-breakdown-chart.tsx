@@ -18,25 +18,25 @@ import {
 } from '@/components/ui/chart';
 
 const chartData = [
-  { category: 'Materials', value: 450, fill: 'var(--color-materials)' },
-  { category: 'Rent', value: 1200, fill: 'var(--color-rent)' },
-  { category: 'Supplies', value: 250, fill: 'var(--color-supplies)' },
+  { category: 'Materiais', value: 450, fill: 'var(--color-materials)' },
+  { category: 'Aluguel', value: 1200, fill: 'var(--color-rent)' },
+  { category: 'Suprimentos', value: 250, fill: 'var(--color-supplies)' },
 ];
 
 const chartConfig = {
   value: {
-    label: 'Value',
+    label: 'Valor',
   },
   materials: {
-    label: 'Materials',
+    label: 'Materiais',
     color: 'hsl(var(--chart-1))',
   },
   rent: {
-    label: 'Rent',
+    label: 'Aluguel',
     color: 'hsl(var(--chart-2))',
   },
   supplies: {
-    label: 'Supplies',
+    label: 'Suprimentos',
     color: 'hsl(var(--chart-3))',
   },
 } satisfies ChartConfig;
@@ -45,8 +45,8 @@ const ExpenseBreakdownChart = () => {
   return (
     <Card className="flex flex-col h-full animate-card-in" style={{ animationDelay: '300ms', animationFillMode: 'backwards' }}>
       <CardHeader>
-        <CardTitle>Expense Breakdown</CardTitle>
-        <CardDescription>Monthly expense distribution</CardDescription>
+        <CardTitle>Detalhamento de Despesas</CardTitle>
+        <CardDescription>Distribuição mensal de despesas</CardDescription>
       </CardHeader>
       <CardContent className="flex-1 pb-0">
         <ChartContainer

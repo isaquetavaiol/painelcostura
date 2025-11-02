@@ -57,17 +57,17 @@ export default function ProfilePage() {
           <CardContent>
             <div className="space-y-2">
                 <div className="flex justify-between">
-                    <span className="text-muted-foreground">Email</span>
+                    <span className="text-muted-foreground">E-mail</span>
                     <span>{user.email}</span>
                 </div>
                 <div className="flex justify-between">
-                    <span className="text-muted-foreground">Joined</span>
+                    <span className="text-muted-foreground">Membro desde</span>
                     <span>{user.metadata.creationTime ? new Date(user.metadata.creationTime).toLocaleDateString() : 'N/A'}</span>
                 </div>
             </div>
           </CardContent>
           <CardFooter>
-            <Button variant="destructive" className="w-full" onClick={handleLogout}>Log out</Button>
+            <Button variant="destructive" className="w-full" onClick={handleLogout}>Sair</Button>
           </CardFooter>
         </Card>
       </main>

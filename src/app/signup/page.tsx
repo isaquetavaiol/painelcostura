@@ -27,8 +27,8 @@ import Link from 'next/link';
 import { useEffect } from 'react';
 
 const formSchema = z.object({
-  email: z.string().email({ message: 'Invalid email address.' }),
-  password: z.string().min(6, { message: 'Password must be at least 6 characters.' }),
+  email: z.string().email({ message: 'Endereço de e-mail inválido.' }),
+  password: z.string().min(6, { message: 'A senha deve ter pelo menos 6 caracteres.' }),
 });
 
 export default function SignUpPage() {
@@ -71,9 +71,9 @@ export default function SignUpPage() {
     <div className="flex min-h-screen items-center justify-center bg-background p-4">
       <Card className="w-full max-w-sm">
         <CardHeader>
-          <CardTitle className="text-2xl">Sign Up</CardTitle>
+          <CardTitle className="text-2xl">Inscreva-se</CardTitle>
           <CardDescription>
-            Create an account to get started.
+            Crie uma conta para começar.
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -84,9 +84,9 @@ export default function SignUpPage() {
                 name="email"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Email</FormLabel>
+                    <FormLabel>E-mail</FormLabel>
                     <FormControl>
-                      <Input placeholder="m@example.com" {...field} />
+                      <Input placeholder="m@exemplo.com" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -97,7 +97,7 @@ export default function SignUpPage() {
                 name="password"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Password</FormLabel>
+                    <FormLabel>Senha</FormLabel>
                     <FormControl>
                       <Input type="password" {...field} />
                     </FormControl>
@@ -107,12 +107,12 @@ export default function SignUpPage() {
               />
               {error && <p className="text-sm font-medium text-destructive">{error}</p>}
               <Button type="submit" className="w-full">
-                Create account
+                Criar conta
               </Button>
             </form>
           </Form>
           <div className="mt-4 text-center text-sm">
-            Already have an account?{' '}
+            Já tem uma conta?{' '}
             <Link href="/login" className="underline">
               Login
             </Link>

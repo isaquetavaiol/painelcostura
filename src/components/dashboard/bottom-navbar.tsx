@@ -41,9 +41,9 @@ import { collection } from 'firebase/firestore';
 import { useToast } from '@/hooks/use-toast';
 
 const serviceFormSchema = z.object({
-  name: z.string().min(1, 'Service name is required.'),
+  name: z.string().min(1, 'O nome do serviço é obrigatório.'),
   description: z.string().optional(),
-  price: z.coerce.number().min(0, 'Price must be a positive number.'),
+  price: z.coerce.number().min(0, 'O preço deve ser um número positivo.'),
 });
 
 const BottomNavbar = () => {
@@ -63,15 +63,15 @@ const BottomNavbar = () => {
   });
 
   const navLinks = [
-    { href: '/', icon: <LayoutGrid className="w-6 h-6" />, label: 'Dashboard' },
-    { href: '/projects', icon: <FolderKanban className="w-6 h-6" />, label: 'Projects' },
-    { href: '/services', icon: <Scissors className="w-6 h-6" />, label: 'Services' },
+    { href: '/', icon: <LayoutGrid className="w-6 h-6" />, label: 'Painel' },
+    { href: '/projects', icon: <FolderKanban className="w-6 h-6" />, label: 'Projetos' },
+    { href: '/services', icon: <Scissors className="w-6 h-6" />, label: 'Serviços' },
   ];
 
   const secondaryNavLinks = [
-      { href: '/revenue', icon: <DollarSign className="w-6 h-6" />, label: 'Revenue' },
-      { href: '/expenses', icon: <Banknote className="w-6 h-6" />, label: 'Expenses' },
-      { href: '/profile', icon: <User className="w-6 h-6" />, label: 'Profile' },
+      { href: '/revenue', icon: <DollarSign className="w-6 h-6" />, label: 'Receita' },
+      { href: '/expenses', icon: <Banknote className="w-6 h-6" />, label: 'Despesas' },
+      { href: '/profile', icon: <User className="w-6 h-6" />, label: 'Perfil' },
   ]
 
   async function onSubmit(values: z.infer<typeof serviceFormSchema>) {
@@ -81,8 +81,8 @@ const BottomNavbar = () => {
     addDocumentNonBlocking(servicesCollection, values);
     
     toast({
-      title: 'Service Added',
-      description: `${values.name} has been successfully added.`,
+      title: 'Serviço Adicionado',
+      description: `${values.name} foi adicionado com sucesso.`,
     });
     
     form.reset();
@@ -115,14 +115,14 @@ const BottomNavbar = () => {
               className="w-16 h-16 rounded-full flex flex-col items-center justify-center gap-1 bg-primary text-primary-foreground shadow-lg hover:bg-primary/90"
             >
               <Plus className="w-6 h-6" />
-              <span className="text-xs font-bold">Add</span>
+              <span className="text-xs font-bold">Adicionar</span>
             </Button>
           </DialogTrigger>
           <DialogContent className="sm:max-w-[425px]">
             <DialogHeader>
-              <DialogTitle>Add New Service</DialogTitle>
+              <DialogTitle>Adicionar Novo Serviço</DialogTitle>
               <DialogDescription>
-                Fill out the details for the new service you want to offer.
+                Preencha os detalhes do novo serviço que você deseja oferecer.
               </DialogDescription>
             </DialogHeader>
             <Form {...form}>
@@ -132,9 +132,9 @@ const BottomNavbar = () => {
                   name="name"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Service Name</FormLabel>
+                      <FormLabel>Nome do Serviço</FormLabel>
                       <FormControl>
-                        <Input placeholder="e.g., Custom Suit Tailoring" {...field} />
+                        <Input placeholder="ex: Terno Sob Medida" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -145,9 +145,9 @@ const BottomNavbar = () => {
                   name="price"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Price ($)</FormLabel>
+                      <FormLabel>Preço (R$)</FormLabel>
                       <FormControl>
-                        <Input type="number" placeholder="e.g., 250.00" {...field} />
+                        <Input type="number" placeholder="ex: 250,00" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -158,10 +158,10 @@ const BottomNavbar = () => {
                   name="description"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Description (Optional)</FormLabel>
+                      <FormLabel>Descrição (Opcional)</FormLabel>
                       <FormControl>
                         <Textarea
-                          placeholder="Describe the service in detail..."
+                          placeholder="Descreva o serviço em detalhes..."
                           {...field}
                         />
                       </FormControl>
@@ -170,7 +170,7 @@ const BottomNavbar = () => {
                   )}
                 />
                 <DialogFooter>
-                  <Button type="submit">Add Service</Button>
+                  <Button type="submit">Adicionar Serviço</Button>
                 </DialogFooter>
               </form>
             </Form>
