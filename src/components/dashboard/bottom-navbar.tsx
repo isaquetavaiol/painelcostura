@@ -8,7 +8,6 @@ import {
   DollarSign,
   Plus,
   UserPlus,
-  Package,
 } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
@@ -83,15 +82,17 @@ const BottomNavbar = () => {
   });
 
   const navLinks = [
-    { href: '/', icon: <LayoutGrid className="w-6 h-6" />, label: 'Painel' },
-    { href: '/projects', icon: <FolderKanban className="w-6 h-6" />, label: 'Projetos' },
+    { href: '/', icon: <LayoutGrid className="w-6 h-6" /> },
+    { href: '/projects', icon: <FolderKanban className="w-6 h-6" /> },
+    { href: '/services', icon: <Scissors className="w-6 h-6" /> },
+    { href: '/revenue', icon: <DollarSign className="w-6 h-6" /> },
+    { href: '/clients', icon: <UserPlus className="w-6 h-6" /> },
+    { href: '/profile', icon: <User className="w-6 h-6" /> },
   ];
 
-  const secondaryNavLinks = [
-    { href: '/revenue', icon: <DollarSign className="w-6 h-6" />, label: 'Receita' },
-    { href: '/clients', icon: <UserPlus className="w-6 h-6" />, label: 'Clientes' },
-    { href: '/profile', icon: <User className="w-6 h-6" />, label: 'Perfil' },
-  ];
+  const leftLinks = navLinks.slice(0, 3);
+  const rightLinks = navLinks.slice(3);
+
 
   async function onServiceSubmit(values: z.infer<typeof serviceFormSchema>) {
     if (!user || !firestore) return;
@@ -125,29 +126,32 @@ const BottomNavbar = () => {
 
   return (
     <div className="fixed bottom-4 left-1/2 -translate-x-1/2 w-auto z-50">
-      <div className="bg-card/80 backdrop-blur-sm rounded-full p-3 flex items-center justify-around border gap-3 px-4">
-        {navLinks.map((link) => (
-          <Link
+      <div className="bg-card/80 backdrop-blur-sm rounded-full p-2 flex items-center justify-around border gap-1">
+        {leftLinks.map((link) => (
+          <Button 
             key={link.href}
-            href={link.href}
+            variant="ghost"
+            size="icon"
             className={cn(
-              'flex flex-col items-center gap-1 transition-colors w-14 text-center',
-              pathname === link.href ? 'text-foreground' : 'text-muted-foreground hover:text-foreground'
+              'rounded-full w-12 h-12',
+              pathname === link.href ? 'bg-primary/20 text-primary' : 'text-muted-foreground'
             )}
+            asChild
           >
-            {link.icon}
-            <span className="text-xs">{link.label}</span>
-          </Link>
+            <Link href={link.href}>
+              {link.icon}
+            </Link>
+          </Button>
         ))}
 
         <Dialog open={isDialogOpen} onOpenChange={setDialogOpen}>
           <DialogTrigger asChild>
             <Button
               variant="default"
-              className="w-16 h-16 rounded-full flex flex-col items-center justify-center gap-1 bg-primary text-primary-foreground shadow-lg hover:bg-primary/90"
+              size="icon"
+              className="w-14 h-14 rounded-full bg-primary text-primary-foreground shadow-lg hover:bg-primary/90 mx-2"
             >
-              <Plus className="w-6 h-6" />
-              <span className="text-xs font-bold">Adicionar</span>
+              <Plus className="w-7 h-7" />
             </Button>
           </DialogTrigger>
           <DialogContent className="sm:max-w-[425px]">
@@ -302,34 +306,22 @@ const BottomNavbar = () => {
             </Tabs>
           </DialogContent>
         </Dialog>
-
-        <Link
-            key="/services"
-            href="/services"
-            className={cn(
-              'flex flex-col items-center gap-1 transition-colors w-14 text-center',
-              pathname === "/services"
-                ? 'text-foreground'
-                : 'text-muted-foreground hover:text-foreground'
-            )}
-          >
-            <Scissors className="w-6 h-6" />
-            <span className="text-xs">Serviços</span>
-          </Link>
-         {secondaryNavLinks.map((link) => (
-          <Link
+        
+        {rightLinks.map((link) => (
+          <Button 
             key={link.href}
-            href={link.href}
+            variant="ghost"
+            size="icon"
             className={cn(
-              'flex flex-col items-center gap-1 transition-colors w-14 text-center',
-              pathname === link.href
-                ? 'text-foreground'
-                : 'text-muted-foreground hover:text-foreground'
+              'rounded-full w-12 h-12',
+              pathname === link.href ? 'bg-primary/20 text-primary' : 'text-muted-foreground'
             )}
+            asChild
           >
-            {link.icon}
-            <span className="text-xs">{link.label}</span>
-          </Link>
+            <Link href={link.href}>
+              {link.icon}
+            </Link>
+          </Button>
         ))}
       </div>
     </div>
@@ -337,5 +329,3 @@ const BottomNavbar = () => {
 };
 
 export default BottomNavbar;
-
-    
