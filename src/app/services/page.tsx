@@ -154,7 +154,7 @@ export default function ServicesPage() {
               </DialogDescription>
             </DialogHeader>
             <Form {...form}>
-              <form onSubmit={form.handleSubmit(onEditSubmit)} className="space-y-4">
+              <form onSubmit={form.handleSubmit(onEditSubmit)} className="space-y-4 py-4">
                 <FormField
                   control={form.control}
                   name="name"
