@@ -10,6 +10,7 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import { Input } from '@/components/ui/input';
 import { Pencil, Trash2, UserCircle, Check, X } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { cn } from '@/lib/utils';
 
 interface Client {
   id: string;
@@ -125,54 +126,43 @@ export default function ClientsPage() {
               <p className="text-muted-foreground">Adicione seu primeiro cliente usando o botão '+' na barra de navegação.</p>
             </div>
         ) : (
-          <Card>
-            <CardHeader>
-              <CardTitle>Seus Clientes</CardTitle>
-              <CardDescription>Dê um duplo clique em um nome ou telefone para editar.</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                {clients.map((client) => (
-                  <div key={client.id} className="flex items-center justify-between gap-4 rounded-lg p-3 hover:bg-muted/50">
-                    <div className="flex-1">
-                      <EditableField
-                        initialValue={client.name}
-                        onSave={(newValue) => handleUpdateClient(client.id, 'name', newValue)}
-                      />
-                    </div>
-                    <div className="flex-1">
-                       <EditableField
-                        initialValue={client.phone || ''}
-                        onSave={(newValue) => handleUpdateClient(client.id, 'phone', newValue)}
-                      />
-                    </div>
-                    <div className="flex items-center gap-2">
-                       <AlertDialog>
-                        <AlertDialogTrigger asChild>
-                          <Button variant="destructive" size="icon">
-                              <Trash2 className="h-4 w-4" />
-                              <span className="sr-only">Excluir</span>
-                          </Button>
-                        </AlertDialogTrigger>
-                        <AlertDialogContent>
-                          <AlertDialogHeader>
-                            <AlertDialogTitle>Você tem certeza?</AlertDialogTitle>
-                            <AlertDialogDescription>
-                              Essa ação não pode ser desfeita. Isso excluirá permanentemente o cliente.
-                            </AlertDialogDescription>
-                          </AlertDialogHeader>
-                          <AlertDialogFooter>
-                            <AlertDialogCancel>Cancelar</AlertDialogCancel>
-                            <AlertDialogAction onClick={() => handleDeleteClient(client.id)}>Excluir</AlertDialogAction>
-                          </AlertDialogFooter>
-                        </AlertDialogContent>
-                      </AlertDialog>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
+          <div className="cards-container">
+            {clients.map((client) => (
+              <Card
+                key={client.id}
+                className={cn("animated-card flex flex-col w-64 shrink-0")}
+              >
+                 <CardHeader>
+                  <CardTitle className="truncate">{client.name}</CardTitle>
+                </CardHeader>
+                <CardContent className="flex-grow">
+                   <p className="text-sm text-muted-foreground">{client.phone || 'Nenhum telefone'}</p>
+                </CardContent>
+                <CardFooter className="gap-2">
+                   <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                      <Button variant="destructive" size="icon">
+                          <Trash2 className="h-4 w-4" />
+                          <span className="sr-only">Excluir</span>
+                      </Button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>Você tem certeza?</AlertDialogTitle>
+                        <AlertDialogDescription>
+                          Essa ação não pode ser desfeita. Isso excluirá permanentemente o cliente.
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                        <AlertDialogAction onClick={() => handleDeleteClient(client.id)}>Excluir</AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
+                </CardFooter>
+              </Card>
+            ))}
+          </div>
         )}
       </main>
       <BottomNavbar />
