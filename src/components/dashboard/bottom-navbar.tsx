@@ -8,6 +8,7 @@ import {
   DollarSign,
   Plus,
   UserPlus,
+  Package,
 } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
@@ -38,7 +39,7 @@ import * as z from 'zod';
 import { useState } from 'react';
 import { useFirestore, useUser } from '@/firebase';
 import { addDocumentNonBlocking } from '@/firebase/non-blocking-updates';
-import { collection } from 'firebase/firestore';
+import { collection, serverTimestamp } from 'firebase/firestore';
 import { useToast } from '@/hooks/use-toast';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
@@ -52,6 +53,12 @@ const clientFormSchema = z.object({
   name: z.string().min(1, 'O nome do cliente é obrigatório.'),
   phone: z.string().optional(),
 });
+
+const projectFormSchema = z.object({
+  name: z.string().min(1, 'O nome do projeto é obrigatório.'),
+  description: z.string().optional(),
+});
+
 
 const BottomNavbar = () => {
   const pathname = usePathname();
@@ -68,6 +75,11 @@ const BottomNavbar = () => {
   const clientForm = useForm<z.infer<typeof clientFormSchema>>({
     resolver: zodResolver(clientFormSchema),
     defaultValues: { name: '', phone: '' },
+  });
+
+  const projectForm = useForm<z.infer<typeof projectFormSchema>>({
+    resolver: zodResolver(projectFormSchema),
+    defaultValues: { name: '', description: '' },
   });
 
   const navLinks = [
@@ -96,6 +108,18 @@ const BottomNavbar = () => {
     addDocumentNonBlocking(clientsCollection, values);
     toast({ title: 'Cliente Adicionado', description: `${values.name} foi adicionado.` });
     clientForm.reset();
+    setDialogOpen(false);
+  }
+
+  async function onProjectSubmit(values: z.infer<typeof projectFormSchema>) {
+    if (!user || !firestore) return;
+    const projectsCollection = collection(firestore, `users/${user.uid}/projects`);
+    addDocumentNonBlocking(projectsCollection, {
+      ...values,
+      startDate: serverTimestamp(),
+    });
+    toast({ title: 'Projeto Adicionado', description: `${values.name} foi adicionado.` });
+    projectForm.reset();
     setDialogOpen(false);
   }
 
@@ -128,9 +152,10 @@ const BottomNavbar = () => {
           </DialogTrigger>
           <DialogContent className="sm:max-w-[425px]">
             <Tabs defaultValue="service" className="w-full">
-              <TabsList className="grid w-full grid-cols-2">
+              <TabsList className="grid w-full grid-cols-3">
                 <TabsTrigger value="service">Novo Serviço</TabsTrigger>
                 <TabsTrigger value="client">Novo Cliente</TabsTrigger>
+                <TabsTrigger value="project">Novo Projeto</TabsTrigger>
               </TabsList>
               <TabsContent value="service">
                 <DialogHeader>
@@ -229,6 +254,51 @@ const BottomNavbar = () => {
                   </form>
                 </Form>
               </TabsContent>
+              <TabsContent value="project">
+                <DialogHeader>
+                  <DialogTitle>Adicionar Novo Projeto</DialogTitle>
+                  <DialogDescription>
+                    Preencha os detalhes do novo projeto.
+                  </DialogDescription>
+                </DialogHeader>
+                <Form {...projectForm}>
+                  <form onSubmit={projectForm.handleSubmit(onProjectSubmit)} className="space-y-4 py-4">
+                    <FormField
+                      control={projectForm.control}
+                      name="name"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Nome do Projeto</FormLabel>
+                          <FormControl>
+                            <Input placeholder="ex: Vestido de Noiva" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={projectForm.control}
+                      name="description"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Descrição (Opcional)</FormLabel>
+                          <FormControl>
+                            <Textarea
+                              placeholder="Descreva o projeto em detalhes..."
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <DialogFooter>
+                      <DialogClose asChild><Button type="button" variant="secondary">Cancelar</Button></DialogClose>
+                      <Button type="submit">Adicionar Projeto</Button>
+                    </DialogFooter>
+                  </form>
+                </Form>
+              </TabsContent>
             </Tabs>
           </DialogContent>
         </Dialog>
@@ -267,3 +337,5 @@ const BottomNavbar = () => {
 };
 
 export default BottomNavbar;
+
+    
