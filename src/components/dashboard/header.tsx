@@ -1,3 +1,4 @@
+'use client';
 import { SidebarTrigger } from '@/components/ui/sidebar';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -10,9 +11,20 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
+import { useAuth, useUser } from '@/firebase';
+import { signOut } from 'firebase/auth';
+import { useRouter } from 'next/navigation';
 
 const Header = () => {
+  const { user } = useUser();
+  const auth = useAuth();
+  const router = useRouter();
   const userAvatar = PlaceHolderImages.find(p => p.id === 'user-avatar');
+  
+  const handleLogout = async () => {
+    await signOut(auth);
+    router.push('/login');
+  };
 
   return (
     <header className="sticky top-0 z-10 flex h-16 items-center gap-4 border-b bg-background px-4 md:px-6">
@@ -26,10 +38,12 @@ const Header = () => {
           <DropdownMenuTrigger asChild>
             <Button variant="ghost" className="relative h-10 w-10 rounded-full">
               <Avatar className="h-10 w-10">
-                {userAvatar ? (
+                {user?.photoURL ? (
+                  <AvatarImage src={user.photoURL} alt="User Avatar" />
+                ) : userAvatar ? (
                   <AvatarImage src={userAvatar.imageUrl} alt="User Avatar" />
                 ) : null}
-                <AvatarFallback>AD</AvatarFallback>
+                <AvatarFallback>{user?.email?.[0].toUpperCase() ?? 'A'}</AvatarFallback>
               </Avatar>
             </Button>
           </DropdownMenuTrigger>
@@ -40,7 +54,7 @@ const Header = () => {
             <DropdownMenuItem>Billing</DropdownMenuItem>
             <DropdownMenuItem>Settings</DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>Log out</DropdownMenuItem>
+            <DropdownMenuItem onClick={handleLogout}>Log out</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
