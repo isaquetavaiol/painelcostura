@@ -111,7 +111,7 @@ body {
   }
 
   .animated-card {
-    @apply w-full max-w-sm transition-transform duration-300 ease-in-out;
+    @apply w-full max-w-sm transition-all duration-300 ease-in-out;
   }
 
   /* Desktop: Horizontal carousel with hover effects */
@@ -130,6 +130,11 @@ body {
 
     .cards-container:hover .animated-card {
       @apply -translate-y-2;
+    }
+    
+    .cards-container:hover .animated-card:not(:hover) {
+      filter: blur(3px);
+      opacity: 0.8;
     }
 
     .animated-card:hover {
