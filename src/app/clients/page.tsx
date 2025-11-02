@@ -1,19 +1,14 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import BottomNavbar from '@/components/dashboard/bottom-navbar';
 import { useUser, useFirestore, useCollection, useMemoFirebase, updateDocumentNonBlocking, deleteDocumentNonBlocking } from '@/firebase';
 import { collection, doc } from 'firebase/firestore';
 import { Card, CardHeader, CardTitle, CardContent, CardDescription, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter, DialogClose } from '@/components/ui/dialog';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog"
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import * as z from 'zod';
-import { Pencil, Trash2, UserCircle } from 'lucide-react';
+import { Pencil, Trash2, UserCircle, Check, X } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 interface Client {
@@ -22,10 +17,65 @@ interface Client {
   phone?: string;
 }
 
-const clientFormSchema = z.object({
-  name: z.string().min(1, 'O nome do cliente é obrigatório.'),
-  phone: z.string().optional(),
-});
+interface EditableFieldProps {
+  initialValue: string;
+  onSave: (newValue: string) => void;
+}
+
+function EditableField({ initialValue, onSave }: EditableFieldProps) {
+  const [isEditing, setIsEditing] = useState(false);
+  const [value, setValue] = useState(initialValue);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (isEditing && inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, [isEditing]);
+
+  const handleSave = () => {
+    if (value.trim() !== initialValue.trim()) {
+      onSave(value);
+    }
+    setIsEditing(false);
+  };
+
+  const handleCancel = () => {
+    setValue(initialValue);
+    setIsEditing(false);
+  };
+  
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      handleSave();
+    } else if (e.key === 'Escape') {
+      handleCancel();
+    }
+  };
+
+  if (isEditing) {
+    return (
+      <div className="flex items-center gap-2">
+        <Input
+          ref={inputRef}
+          value={value}
+          onChange={(e) => setValue(e.target.value)}
+          onBlur={handleSave}
+          onKeyDown={handleKeyDown}
+          className="h-8"
+        />
+        <Button variant="ghost" size="icon" className="h-8 w-8" onClick={handleSave}><Check className="h-4 w-4" /></Button>
+        <Button variant="ghost" size="icon" className="h-8 w-8" onClick={handleCancel}><X className="h-4 w-4" /></Button>
+      </div>
+    );
+  }
+
+  return (
+    <div onDoubleClick={() => setIsEditing(true)} className="w-full cursor-pointer rounded-md px-2 py-1 hover:bg-muted">
+      {value || <span className="text-muted-foreground">N/A</span>}
+    </div>
+  );
+}
 
 
 export default function ClientsPage() {
@@ -33,28 +83,12 @@ export default function ClientsPage() {
   const firestore = useFirestore();
   const { toast } = useToast();
   
-  const [isEditDialogOpen, setEditDialogOpen] = useState(false);
-  const [selectedClient, setSelectedClient] = useState<Client | null>(null);
-
   const clientsQuery = useMemoFirebase(() => {
     if (!user || !firestore) return null;
     return collection(firestore, `users/${user.uid}/clients`);
   }, [user, firestore]);
 
   const { data: clients, isLoading } = useCollection<Client>(clientsQuery);
-
-  const form = useForm<z.infer<typeof clientFormSchema>>({
-    resolver: zodResolver(clientFormSchema),
-  });
-
-  const handleEditClick = (client: Client) => {
-    setSelectedClient(client);
-    form.reset({
-      name: client.name,
-      phone: client.phone,
-    });
-    setEditDialogOpen(true);
-  };
   
   const handleDeleteClient = (clientId: string) => {
     if (!user || !firestore) return;
@@ -66,19 +100,14 @@ export default function ClientsPage() {
     });
   };
 
-  async function onEditSubmit(values: z.infer<typeof clientFormSchema>) {
-    if (!user || !firestore || !selectedClient) return;
-
-    const clientDocRef = doc(firestore, `users/${user.uid}/clients/${selectedClient.id}`);
-    updateDocumentNonBlocking(clientDocRef, values);
-    
+  const handleUpdateClient = (clientId: string, field: 'name' | 'phone', value: string) => {
+    if (!user || !firestore) return;
+    const clientDocRef = doc(firestore, `users/${user.uid}/clients/${clientId}`);
+    updateDocumentNonBlocking(clientDocRef, { [field]: value });
     toast({
       title: 'Cliente Atualizado',
-      description: `${values.name} foi atualizado com sucesso.`,
+      description: `O campo ${field === 'name' ? 'nome' : 'telefone'} foi atualizado.`,
     });
-    
-    setEditDialogOpen(false);
-    setSelectedClient(null);
   }
 
 
@@ -96,95 +125,56 @@ export default function ClientsPage() {
               <p className="text-muted-foreground">Adicione seu primeiro cliente usando o botão '+' na barra de navegação.</p>
             </div>
         ) : (
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-            {clients.map((client, index) => (
-              <Card 
-                key={client.id} 
-                className="flex flex-col animate-card-in" 
-                style={{ animationDelay: `${index * 100}ms`, animationFillMode: 'backwards' }}
-              >
-                <CardHeader>
-                  <CardTitle className="truncate">{client.name}</CardTitle>
-                  {client.phone && <CardDescription className="line-clamp-2 h-[40px]">{client.phone}</CardDescription>}
-                </CardHeader>
-                <CardContent className="flex-grow" />
-                <CardFooter className="gap-2">
-                    <Button variant="outline" size="icon" onClick={() => handleEditClick(client)}>
-                        <Pencil className="h-4 w-4" />
-                        <span className="sr-only">Editar</span>
-                    </Button>
-                    <AlertDialog>
-                      <AlertDialogTrigger asChild>
-                        <Button variant="destructive" size="icon">
-                            <Trash2 className="h-4 w-4" />
-                            <span className="sr-only">Excluir</span>
-                        </Button>
-                      </AlertDialogTrigger>
-                      <AlertDialogContent>
-                        <AlertDialogHeader>
-                          <AlertDialogTitle>Você tem certeza?</AlertDialogTitle>
-                          <AlertDialogDescription>
-                            Essa ação não pode ser desfeita. Isso excluirá permanentemente o cliente.
-                          </AlertDialogDescription>
-                        </AlertDialogHeader>
-                        <AlertDialogFooter>
-                          <AlertDialogCancel>Cancelar</AlertDialogCancel>
-                          <AlertDialogAction onClick={() => handleDeleteClient(client.id)}>Excluir</AlertDialogAction>
-                        </AlertDialogFooter>
-                      </AlertDialogContent>
-                    </AlertDialog>
-                </CardFooter>
-              </Card>
-            ))}
-          </div>
+          <Card>
+            <CardHeader>
+              <CardTitle>Seus Clientes</CardTitle>
+              <CardDescription>Dê um duplo clique em um nome ou telefone para editar.</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                {clients.map((client) => (
+                  <div key={client.id} className="flex items-center justify-between gap-4 rounded-lg p-3 hover:bg-muted/50">
+                    <div className="flex-1">
+                      <EditableField
+                        initialValue={client.name}
+                        onSave={(newValue) => handleUpdateClient(client.id, 'name', newValue)}
+                      />
+                    </div>
+                    <div className="flex-1">
+                       <EditableField
+                        initialValue={client.phone || ''}
+                        onSave={(newValue) => handleUpdateClient(client.id, 'phone', newValue)}
+                      />
+                    </div>
+                    <div className="flex items-center gap-2">
+                       <AlertDialog>
+                        <AlertDialogTrigger asChild>
+                          <Button variant="destructive" size="icon">
+                              <Trash2 className="h-4 w-4" />
+                              <span className="sr-only">Excluir</span>
+                          </Button>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                          <AlertDialogHeader>
+                            <AlertDialogTitle>Você tem certeza?</AlertDialogTitle>
+                            <AlertDialogDescription>
+                              Essa ação não pode ser desfeita. Isso excluirá permanentemente o cliente.
+                            </AlertDialogDescription>
+                          </AlertDialogHeader>
+                          <AlertDialogFooter>
+                            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                            <AlertDialogAction onClick={() => handleDeleteClient(client.id)}>Excluir</AlertDialogAction>
+                          </AlertDialogFooter>
+                        </AlertDialogContent>
+                      </AlertDialog>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
         )}
       </main>
-      <Dialog open={isEditDialogOpen} onOpenChange={setEditDialogOpen}>
-          <DialogContent className="sm:max-w-[425px]">
-            <DialogHeader>
-              <DialogTitle>Editar Cliente</DialogTitle>
-              <DialogDescription>
-                Atualize os detalhes do cliente.
-              </DialogDescription>
-            </DialogHeader>
-            <Form {...form}>
-              <form onSubmit={form.handleSubmit(onEditSubmit)} className="space-y-4 py-4">
-                <FormField
-                  control={form.control}
-                  name="name"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Nome Completo</FormLabel>
-                      <FormControl>
-                        <Input placeholder="ex: Juliana Costa" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="phone"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Telefone (Opcional)</FormLabel>
-                      <FormControl>
-                         <Input type="tel" placeholder="ex: (11) 98765-4321" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <DialogFooter>
-                  <DialogClose asChild>
-                    <Button type="button" variant="secondary">Cancelar</Button>
-                  </DialogClose>
-                  <Button type="submit">Salvar Alterações</Button>
-                </DialogFooter>
-              </form>
-            </Form>
-          </DialogContent>
-        </Dialog>
       <BottomNavbar />
     </div>
   );
