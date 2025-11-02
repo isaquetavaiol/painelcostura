@@ -16,6 +16,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { Scissors, Pencil, Trash2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { cn } from '@/lib/utils';
 
 interface Service {
   id: string;
@@ -98,12 +99,13 @@ export default function ServicesPage() {
               <p className="text-muted-foreground">Adicione seu primeiro serviço usando o botão '+' na barra de navegação.</p>
             </div>
         ) : (
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-            {services.map((service, index) => (
+          <div className="cards-container">
+            {services.map((service) => (
               <Card 
                 key={service.id} 
-                className="flex flex-col animate-card-in" 
-                style={{ animationDelay: `${index * 100}ms`, animationFillMode: 'backwards' }}
+                className={cn(
+                  "animated-card flex flex-col w-64 shrink-0"
+                )}
               >
                 <CardHeader>
                   <CardTitle className="truncate">{service.name}</CardTitle>

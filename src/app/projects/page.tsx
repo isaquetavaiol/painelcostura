@@ -16,6 +16,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { FolderKanban, Pencil, Trash2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { cn } from '@/lib/utils';
 
 interface Project {
   id: string;
@@ -96,12 +97,13 @@ export default function ProjectsPage() {
               <p className="text-muted-foreground">Adicione seu primeiro projeto usando o botão '+' na barra de navegação.</p>
             </div>
         ) : (
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-            {projects.map((project, index) => (
+          <div className="cards-container">
+            {projects.map((project) => (
               <Card 
                 key={project.id} 
-                className="flex flex-col animate-card-in" 
-                style={{ animationDelay: `${index * 100}ms`, animationFillMode: 'backwards' }}
+                className={cn(
+                  "animated-card flex flex-col w-64 shrink-0"
+                )}
               >
                 <CardHeader>
                   <CardTitle className="truncate">{project.name}</CardTitle>
