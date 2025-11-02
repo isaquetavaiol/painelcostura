@@ -47,7 +47,7 @@ const ServiceProfitChart = () => {
         <CardDescription>Lucros de ajustes, vestidos e personalizações</CardDescription>
       </CardHeader>
       <CardContent>
-        <ChartContainer config={chartConfig} className="h-[350px] w-full">
+        <ChartContainer config={chartConfig} className="h-[300px] w-full">
           {isLoading ? (
             <div className="flex h-full w-full items-center justify-center">
               <div className="h-10 w-10 animate-spin rounded-full border-4 border-primary border-t-transparent" />
@@ -59,7 +59,7 @@ const ServiceProfitChart = () => {
           ) : (
             <BarChart 
               data={chartData}
-              margin={{ top: 20, right: 20, left: 10, bottom: 5 }}
+              margin={{ top: 20, right: 20, left: 0, bottom: 5 }}
               accessibilityLayer
             >
               <CartesianGrid vertical={false} />
@@ -71,7 +71,10 @@ const ServiceProfitChart = () => {
               />
               <YAxis 
                   tickFormatter={(value) => `R$${value/1000}k`}
-                  width={50}
+                  width={40}
+                  tickMargin={5}
+                  axisLine={false}
+                  tickLine={false}
               />
               <ChartTooltip
                 cursor={false}

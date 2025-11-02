@@ -29,7 +29,7 @@ export default function DashboardPage() {
 
   return (
     <div className="flex min-h-screen w-full flex-col">
-      <main className="flex-1 space-y-6 p-4 md:p-8 pt-6 mb-28">
+      <main className="flex-1 space-y-6 p-4 md:p-8 pt-6 mb-32">
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-7">
           <div className="lg:col-span-4 md:col-span-1">
             <ServiceProfitChart />
