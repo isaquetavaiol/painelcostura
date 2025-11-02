@@ -1,7 +1,7 @@
 
 'use client';
 import Link from 'next/link';
-import { LayoutGrid, Trophy, User, FolderKanban, Scissors, DollarSign, Banknote } from 'lucide-react';
+import { LayoutGrid, User, FolderKanban, Scissors, DollarSign, Banknote } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
 
@@ -14,7 +14,6 @@ const BottomNavbar = () => {
     { href: '/services', icon: <Scissors className="w-6 h-6" />, label: 'Services' },
     { href: '/revenue', icon: <DollarSign className="w-6 h-6" />, label: 'Revenue' },
     { href: '/expenses', icon: <Banknote className="w-6 h-6" />, label: 'Expenses' },
-    { href: '/leaderboard', icon: <Trophy className="w-6 h-6" />, label: 'Leaderboard' },
     { href: '/profile', icon: <User className="w-6 h-6" />, label: 'Profile' },
   ];
 
