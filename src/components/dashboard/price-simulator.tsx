@@ -8,7 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter }
 import { Button } from '@/components/ui/button';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { Calculator, Wand2 } from 'lucide-react';
+import { Calculator } from 'lucide-react';
 
 const formSchema = z.object({
   materialCost: z.coerce.number().min(0, { message: 'Must be a positive number' }),
@@ -35,9 +35,9 @@ const PriceSimulator = () => {
   }
 
   return (
-    <Card className="h-full flex flex-col">
+    <Card className="h-full flex flex-col animate-card-in" style={{ animationDelay: '500ms', animationFillMode: 'backwards' }}>
       <CardHeader>
-        <CardTitle className="font-headline">Price Simulator</CardTitle>
+        <CardTitle>Price Simulator</CardTitle>
         <CardDescription>Suggest optimal project prices.</CardDescription>
       </CardHeader>
       <Form {...form}>
@@ -83,7 +83,7 @@ const PriceSimulator = () => {
             )}
           </CardContent>
           <CardFooter>
-            <Button type="submit" className="w-full">
+            <Button type="submit" className="w-full bg-primary hover:bg-primary/90 text-primary-foreground">
               <Calculator className="mr-2 h-4 w-4" />
               Calculate Price
             </Button>

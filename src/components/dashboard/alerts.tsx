@@ -28,9 +28,9 @@ const Alerts = () => {
   ];
 
   return (
-    <Card className="h-full">
+    <Card className="h-full animate-card-in" style={{ animationDelay: '400ms', animationFillMode: 'backwards' }}>
       <CardHeader>
-        <CardTitle className="font-headline">Alerts</CardTitle>
+        <CardTitle>Alerts</CardTitle>
       </CardHeader>
       <CardContent>
         <div className="space-y-4">

@@ -43,9 +43,9 @@ const chartConfig = {
 
 const ExpenseBreakdownChart = () => {
   return (
-    <Card className="flex flex-col h-full">
+    <Card className="flex flex-col h-full animate-card-in" style={{ animationDelay: '300ms', animationFillMode: 'backwards' }}>
       <CardHeader>
-        <CardTitle className="font-headline">Expense Breakdown</CardTitle>
+        <CardTitle>Expense Breakdown</CardTitle>
         <CardDescription>Monthly expense distribution</CardDescription>
       </CardHeader>
       <CardContent className="flex-1 pb-0">

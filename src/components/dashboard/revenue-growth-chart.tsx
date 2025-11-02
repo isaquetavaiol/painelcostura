@@ -33,9 +33,9 @@ const chartConfig = {
 
 const RevenueGrowthChart = () => {
   return (
-    <Card className="h-full">
+    <Card className="h-full animate-card-in" style={{ animationDelay: '200ms', animationFillMode: 'backwards' }}>
       <CardHeader>
-        <CardTitle className="font-headline">Revenue Growth</CardTitle>
+        <CardTitle>Revenue Growth</CardTitle>
         <CardDescription>Month-over-month revenue growth percentage</CardDescription>
       </CardHeader>
       <CardContent>

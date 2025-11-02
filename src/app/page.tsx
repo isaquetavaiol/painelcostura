@@ -30,9 +30,11 @@ export default function DashboardPage() {
     <SidebarProvider>
       <Sidebar>
         <SidebarHeader>
-          <div className="flex items-center gap-2 p-2">
-            <Scissors className="text-accent h-8 w-8" />
-            <h1 className="text-2xl font-headline font-semibold text-sidebar-foreground">
+          <div className="flex items-center gap-3 p-2">
+            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary">
+                <Scissors className="h-6 w-6 text-primary-foreground" />
+            </div>
+            <h1 className="text-xl font-bold text-sidebar-foreground">
               Atelier
             </h1>
           </div>
@@ -80,9 +82,9 @@ export default function DashboardPage() {
       </Sidebar>
       <SidebarInset>
         <Header />
-        <main className="flex-1 space-y-4 p-4 md:p-8 pt-6">
+        <main className="flex-1 space-y-6 p-4 md:p-8 pt-6">
           <FinancialSummary />
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-7">
             <div className="lg:col-span-4">
               <ServiceProfitChart />
             </div>
@@ -90,7 +92,7 @@ export default function DashboardPage() {
               <RevenueGrowthChart />
             </div>
           </div>
-           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
+           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-7">
              <div className="lg:col-span-3">
                <ExpenseBreakdownChart />
              </div>

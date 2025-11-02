@@ -40,11 +40,11 @@ const FinancialSummary = () => {
   ];
 
   return (
-    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-      {summaryData.map((item) => (
-        <Card key={item.title}>
+    <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+      {summaryData.map((item, index) => (
+        <Card key={item.title} className="animate-card-in" style={{ animationDelay: `${index * 100}ms`, animationFillMode: 'backwards' }}>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium font-body">{item.title}</CardTitle>
+            <CardTitle className="text-sm font-medium">{item.title}</CardTitle>
             {item.icon}
           </CardHeader>
           <CardContent>

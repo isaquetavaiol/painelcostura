@@ -32,9 +32,9 @@ const chartConfig = {
 
 const ServiceProfitChart = () => {
   return (
-    <Card className="h-full">
+    <Card className="h-full animate-card-in" style={{ animationDelay: '100ms', animationFillMode: 'backwards' }}>
       <CardHeader>
-        <CardTitle className="font-headline">Service Profitability</CardTitle>
+        <CardTitle>Service Profitability</CardTitle>
         <CardDescription>Profits from tailoring, dresses, and customizations</CardDescription>
       </CardHeader>
       <CardContent>
