@@ -72,7 +72,7 @@ const PriceSimulator = () => {
             {suggestedPrice !== null && (
               <div className="pt-4 text-center">
                  <p className="text-sm text-muted-foreground">Suggested Price:</p>
-                 <p className="text-3xl font-bold text-accent">
+                 <p className="text-3xl font-bold text-primary">
                    {suggestedPrice.toLocaleString('en-US', {
                      style: 'currency',
                      currency: 'USD',
@@ -83,7 +83,7 @@ const PriceSimulator = () => {
             )}
           </CardContent>
           <CardFooter>
-            <Button type="submit" className="w-full bg-primary hover:bg-primary/90 text-primary-foreground">
+            <Button type="submit" className="w-full">
               <Calculator className="mr-2 h-4 w-4" />
               Calculate Price
             </Button>
