@@ -95,17 +95,17 @@ body {
 
   /* Mobile-first: Vertical layout */
   .cards-container {
-    @apply flex flex-col space-y-4;
+    @apply flex flex-col items-center space-y-4;
   }
 
   .animated-card {
-    @apply w-full transition-transform duration-300 ease-in-out;
+    @apply w-full max-w-sm transition-transform duration-300 ease-in-out;
   }
 
   /* Desktop: Horizontal carousel with hover effects */
   @media (min-width: 768px) {
     .cards-container {
-      @apply flex-row overflow-x-auto p-4 -mx-4 space-y-0;
+      @apply flex-row overflow-x-auto p-4 -mx-4 space-y-0 items-start;
     }
 
     .animated-card {
