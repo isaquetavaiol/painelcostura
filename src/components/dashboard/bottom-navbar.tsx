@@ -6,7 +6,6 @@ import {
   FolderKanban,
   Scissors,
   DollarSign,
-  Banknote,
   Plus,
 } from 'lucide-react';
 import { usePathname } from 'next/navigation';
@@ -70,7 +69,6 @@ const BottomNavbar = () => {
 
   const secondaryNavLinks = [
       { href: '/revenue', icon: <DollarSign className="w-6 h-6" />, label: 'Receita' },
-      { href: '/expenses', icon: <Banknote className="w-6 h-6" />, label: 'Despesas' },
       { href: '/profile', icon: <User className="w-6 h-6" />, label: 'Perfil' },
   ]
 
