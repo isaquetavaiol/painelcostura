@@ -1,13 +1,19 @@
 'use client';
 
-import { useMemo } from 'react';
+import { useState } from 'react';
 import BottomNavbar from '@/components/dashboard/bottom-navbar';
-import { useUser, useFirestore, useCollection, useMemoFirebase, deleteDocumentNonBlocking } from '@/firebase';
-import { collection } from 'firebase/firestore';
+import { useUser, useFirestore, useCollection, useMemoFirebase, updateDocumentNonBlocking, deleteDocumentNonBlocking } from '@/firebase';
+import { collection, doc } from 'firebase/firestore';
 import { Card, CardHeader, CardTitle, CardContent, CardDescription, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter, DialogClose } from '@/components/ui/dialog';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog"
-import { Trash2, UserCircle } from 'lucide-react';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import * as z from 'zod';
+import { Pencil, Trash2, UserCircle } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 interface Client {
@@ -16,10 +22,19 @@ interface Client {
   phone?: string;
 }
 
+const clientFormSchema = z.object({
+  name: z.string().min(1, 'O nome do cliente é obrigatório.'),
+  phone: z.string().optional(),
+});
+
+
 export default function ClientsPage() {
   const { user } = useUser();
   const firestore = useFirestore();
   const { toast } = useToast();
+  
+  const [isEditDialogOpen, setEditDialogOpen] = useState(false);
+  const [selectedClient, setSelectedClient] = useState<Client | null>(null);
 
   const clientsQuery = useMemoFirebase(() => {
     if (!user || !firestore) return null;
@@ -28,6 +43,19 @@ export default function ClientsPage() {
 
   const { data: clients, isLoading } = useCollection<Client>(clientsQuery);
 
+  const form = useForm<z.infer<typeof clientFormSchema>>({
+    resolver: zodResolver(clientFormSchema),
+  });
+
+  const handleEditClick = (client: Client) => {
+    setSelectedClient(client);
+    form.reset({
+      name: client.name,
+      phone: client.phone,
+    });
+    setEditDialogOpen(true);
+  };
+  
   const handleDeleteClient = (clientId: string) => {
     if (!user || !firestore) return;
     const clientDocRef = doc(firestore, `users/${user.uid}/clients/${clientId}`);
@@ -37,6 +65,22 @@ export default function ClientsPage() {
       description: 'O cliente foi removido com sucesso.',
     });
   };
+
+  async function onEditSubmit(values: z.infer<typeof clientFormSchema>) {
+    if (!user || !firestore || !selectedClient) return;
+
+    const clientDocRef = doc(firestore, `users/${user.uid}/clients/${selectedClient.id}`);
+    updateDocumentNonBlocking(clientDocRef, values);
+    
+    toast({
+      title: 'Cliente Atualizado',
+      description: `${values.name} foi atualizado com sucesso.`,
+    });
+    
+    setEditDialogOpen(false);
+    setSelectedClient(null);
+  }
+
 
   return (
     <div className="flex min-h-screen w-full flex-col">
@@ -65,6 +109,10 @@ export default function ClientsPage() {
                 </CardHeader>
                 <CardContent className="flex-grow" />
                 <CardFooter className="gap-2">
+                    <Button variant="outline" size="icon" onClick={() => handleEditClick(client)}>
+                        <Pencil className="h-4 w-4" />
+                        <span className="sr-only">Editar</span>
+                    </Button>
                     <AlertDialog>
                       <AlertDialogTrigger asChild>
                         <Button variant="destructive" size="icon">
@@ -91,6 +139,52 @@ export default function ClientsPage() {
           </div>
         )}
       </main>
+      <Dialog open={isEditDialogOpen} onOpenChange={setEditDialogOpen}>
+          <DialogContent className="sm:max-w-[425px]">
+            <DialogHeader>
+              <DialogTitle>Editar Cliente</DialogTitle>
+              <DialogDescription>
+                Atualize os detalhes do cliente.
+              </DialogDescription>
+            </DialogHeader>
+            <Form {...form}>
+              <form onSubmit={form.handleSubmit(onEditSubmit)} className="space-y-4 py-4">
+                <FormField
+                  control={form.control}
+                  name="name"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Nome Completo</FormLabel>
+                      <FormControl>
+                        <Input placeholder="ex: Juliana Costa" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="phone"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Telefone (Opcional)</FormLabel>
+                      <FormControl>
+                         <Input type="tel" placeholder="ex: (11) 98765-4321" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <DialogFooter>
+                  <DialogClose asChild>
+                    <Button type="button" variant="secondary">Cancelar</Button>
+                  </DialogClose>
+                  <Button type="submit">Salvar Alterações</Button>
+                </DialogFooter>
+              </form>
+            </Form>
+          </DialogContent>
+        </Dialog>
       <BottomNavbar />
     </div>
   );
