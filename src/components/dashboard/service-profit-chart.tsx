@@ -59,7 +59,7 @@ const ServiceProfitChart = () => {
           ) : (
             <BarChart 
               data={chartData}
-              margin={{ top: 20, right: 20, left: -10, bottom: 5 }}
+              margin={{ top: 20, right: 20, left: 10, bottom: 5 }}
               accessibilityLayer
             >
               <CartesianGrid vertical={false} />
@@ -71,7 +71,7 @@ const ServiceProfitChart = () => {
               />
               <YAxis 
                   tickFormatter={(value) => `R$${value/1000}k`}
-                  width={60}
+                  width={50}
               />
               <ChartTooltip
                 cursor={false}
