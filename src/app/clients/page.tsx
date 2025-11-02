@@ -113,7 +113,7 @@ export default function ClientsPage() {
 
   return (
     <div className="flex min-h-screen w-full flex-col">
-      <main className="flex-1 space-y-6 p-4 md:p-8 pt-6 mb-32">
+      <main className="flex-1 space-y-6 p-4 md:p-8 pt-6 pb-28 md:pb-8">
         {isLoading ? (
           <div className="flex h-full w-full items-center justify-center">
             <div className="h-10 w-10 animate-spin rounded-full border-4 border-primary border-t-transparent" />
