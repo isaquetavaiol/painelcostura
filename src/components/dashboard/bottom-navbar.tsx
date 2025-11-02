@@ -162,7 +162,7 @@ const BottomNavbar = () => {
                 <TabsTrigger value="project">Novo Projeto</TabsTrigger>
               </TabsList>
               <TabsContent value="service">
-                <DialogHeader>
+                <DialogHeader className="text-center">
                   <DialogTitle>Adicionar Novo Serviço</DialogTitle>
                   <DialogDescription>
                     Preencha os detalhes do novo serviço que você deseja oferecer.
@@ -209,7 +209,7 @@ const BottomNavbar = () => {
                         </FormItem>
                       )}
                     />
-                    <DialogFooter>
+                    <DialogFooter className="justify-center">
                        <DialogClose asChild><Button type="button" variant="secondary">Cancelar</Button></DialogClose>
                       <Button type="submit">Adicionar Serviço</Button>
                     </DialogFooter>
@@ -217,7 +217,7 @@ const BottomNavbar = () => {
                 </Form>
               </TabsContent>
               <TabsContent value="client">
-                 <DialogHeader>
+                 <DialogHeader className="text-center">
                   <DialogTitle>Adicionar Novo Cliente</DialogTitle>
                   <DialogDescription>
                     Preencha os dados básicos do seu novo cliente.
@@ -251,7 +251,7 @@ const BottomNavbar = () => {
                         </FormItem>
                       )}
                     />
-                    <DialogFooter>
+                    <DialogFooter className="justify-center">
                       <DialogClose asChild><Button type="button" variant="secondary">Cancelar</Button></DialogClose>
                       <Button type="submit">Adicionar Cliente</Button>
                     </DialogFooter>
@@ -259,7 +259,7 @@ const BottomNavbar = () => {
                 </Form>
               </TabsContent>
               <TabsContent value="project">
-                <DialogHeader>
+                <DialogHeader className="text-center">
                   <DialogTitle>Adicionar Novo Projeto</DialogTitle>
                   <DialogDescription>
                     Preencha os detalhes do novo projeto.
@@ -296,7 +296,7 @@ const BottomNavbar = () => {
                         </FormItem>
                       )}
                     />
-                    <DialogFooter>
+                    <DialogFooter className="justify-center">
                       <DialogClose asChild><Button type="button" variant="secondary">Cancelar</Button></DialogClose>
                       <Button type="submit">Adicionar Projeto</Button>
                     </DialogFooter>
