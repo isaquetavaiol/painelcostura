@@ -1,7 +1,6 @@
 
 'use client';
 
-import Header from '@/components/dashboard/header';
 import BottomNavbar from '@/components/dashboard/bottom-navbar';
 import { useUser } from '@/firebase';
 import { useRouter } from 'next/navigation';
@@ -40,7 +39,6 @@ export default function ProfilePage() {
 
   return (
     <div className="flex min-h-screen w-full flex-col">
-      <Header />
       <main className="flex-1 flex items-center justify-center space-y-6 p-4 md:p-8 pt-6 mb-28">
         <Card className="w-full max-w-md">
           <CardHeader className="items-center text-center">

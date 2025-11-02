@@ -1,7 +1,5 @@
 'use client';
 
-import Header from '@/components/dashboard/header';
-import FinancialSummary from '@/components/dashboard/financial-summary';
 import ServiceProfitChart from '@/components/dashboard/service-profit-chart';
 import RevenueGrowthChart from '@/components/dashboard/revenue-growth-chart';
 import ExpenseBreakdownChart from '@/components/dashboard/expense-breakdown-chart';
@@ -32,9 +30,8 @@ export default function DashboardPage() {
 
   return (
     <div className="flex min-h-screen w-full flex-col">
-      <Header />
       <main className="flex-1 space-y-6 p-4 md:p-8 pt-6 mb-28">
-        <FinancialSummary />
+        <h1 className="text-3xl font-bold">Painel</h1>
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-7">
           <div className="lg:col-span-4">
             <ServiceProfitChart />

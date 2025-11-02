@@ -1,4 +1,3 @@
-import Header from '@/components/dashboard/header';
 import BottomNavbar from '@/components/dashboard/bottom-navbar';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
@@ -24,7 +23,6 @@ const getTrophyColor = (rank: number) => {
 export default function LeaderboardPage() {
   return (
     <div className="flex min-h-screen w-full flex-col">
-      <Header />
       <main className="flex-1 space-y-6 p-4 md:p-8 pt-6 mb-28">
         <h1 className="text-3xl font-bold">Leaderboard</h1>
          <Card>
