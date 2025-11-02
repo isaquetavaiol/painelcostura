@@ -16,12 +16,8 @@ import {
   ChartLegendContent,
   type ChartConfig,
 } from '@/components/ui/chart';
-
-const chartData = [
-  { category: 'Materiais', value: 450, fill: 'var(--color-materials)' },
-  { category: 'Aluguel', value: 1200, fill: 'var(--color-rent)' },
-  { category: 'Suprimentos', value: 250, fill: 'var(--color-supplies)' },
-];
+import { useCollection, useFirestore, useUser, useMemoFirebase } from '@/firebase';
+import { collection } from 'firebase/firestore';
 
 const chartConfig = {
   value: {
@@ -42,6 +38,22 @@ const chartConfig = {
 } satisfies ChartConfig;
 
 const ExpenseBreakdownChart = () => {
+    const { user } = useUser();
+    const firestore = useFirestore();
+
+    const expensesQuery = useMemoFirebase(() => {
+        if (!user || !firestore) return null;
+        return collection(firestore, `users/${user.uid}/expenses`);
+    }, [user, firestore]);
+
+    const { data: expenses, isLoading } = useCollection<{ category: string; amount: number }>(expensesQuery);
+
+    const chartData = expenses?.map((expense, index) => ({
+        category: expense.category,
+        value: expense.amount,
+        fill: `var(--color-chart-${(index % 3) + 1})`,
+    }));
+
   return (
     <Card className="flex flex-col h-full animate-card-in" style={{ animationDelay: '300ms', animationFillMode: 'backwards' }}>
       <CardHeader>
@@ -53,6 +65,15 @@ const ExpenseBreakdownChart = () => {
           config={chartConfig}
           className="mx-auto aspect-square max-h-[300px]"
         >
+          {isLoading ? (
+            <div className="flex h-full w-full items-center justify-center">
+              <div className="h-10 w-10 animate-spin rounded-full border-4 border-primary border-t-transparent" />
+            </div>
+          ) : !chartData || chartData.length === 0 ? (
+            <div className="flex h-full w-full items-center justify-center">
+                <p className="text-muted-foreground">Nenhuma despesa registrada ainda.</p>
+            </div>
+          ) : (
           <PieChart>
             <ChartTooltip
               cursor={false}
@@ -74,6 +95,7 @@ const ExpenseBreakdownChart = () => {
                 className="-translate-y-2 flex-wrap gap-2 [&>*]:basis-1/4 [&>*]:justify-center"
             />
           </PieChart>
+          )}
         </ChartContainer>
       </CardContent>
     </Card>

@@ -14,14 +14,8 @@ import {
   ChartTooltipContent,
   type ChartConfig,
 } from '@/components/ui/chart';
-
-const chartData = [
-  { service: 'Ajustes', profit: 1860.45 },
-  { service: 'Vestidos', profit: 3050.80 },
-  { service: 'Personalizado', profit: 2370.00 },
-  { service: 'Reparos', profit: 890.10 },
-  { service: 'Noivas', profit: 4500.25 },
-];
+import { useCollection, useFirestore, useUser, useMemoFirebase } from '@/firebase';
+import { collection, query, orderBy } from 'firebase/firestore';
 
 const chartConfig = {
   profit: {
@@ -31,6 +25,21 @@ const chartConfig = {
 } satisfies ChartConfig;
 
 const ServiceProfitChart = () => {
+  const { user } = useUser();
+  const firestore = useFirestore();
+
+  const servicesQuery = useMemoFirebase(() => {
+    if (!user || !firestore) return null;
+    return query(collection(firestore, `users/${user.uid}/services`), orderBy('price', 'desc'));
+  }, [user, firestore]);
+
+  const { data: services, isLoading } = useCollection<{ name: string, price: number }>(servicesQuery);
+
+  const chartData = services?.map(service => ({
+    service: service.name,
+    profit: service.price,
+  }));
+
   return (
     <Card className="h-full animate-card-in" style={{ animationDelay: '100ms', animationFillMode: 'backwards' }}>
       <CardHeader>
@@ -39,27 +48,37 @@ const ServiceProfitChart = () => {
       </CardHeader>
       <CardContent>
         <ChartContainer config={chartConfig} className="h-[350px] w-full">
-          <BarChart 
-            data={chartData}
-            margin={{ top: 20, right: 20, left: -10, bottom: 5 }}
-            accessibilityLayer
-          >
-            <CartesianGrid vertical={false} />
-            <XAxis
-              dataKey="service"
-              tickLine={false}
-              tickMargin={10}
-              axisLine={false}
-            />
-            <YAxis 
-                tickFormatter={(value) => `R$${value/1000}k`}
-            />
-            <ChartTooltip
-              cursor={false}
-              content={<ChartTooltipContent indicator="dot" />}
-            />
-            <Bar dataKey="profit" fill="var(--color-profit)" radius={8} />
-          </BarChart>
+          {isLoading ? (
+            <div className="flex h-full w-full items-center justify-center">
+              <div className="h-10 w-10 animate-spin rounded-full border-4 border-primary border-t-transparent" />
+            </div>
+          ) : !chartData || chartData.length === 0 ? (
+            <div className="flex h-full w-full items-center justify-center">
+              <p className="text-muted-foreground">Nenhum serviço adicionado ainda.</p>
+            </div>
+          ) : (
+            <BarChart 
+              data={chartData}
+              margin={{ top: 20, right: 20, left: -10, bottom: 5 }}
+              accessibilityLayer
+            >
+              <CartesianGrid vertical={false} />
+              <XAxis
+                dataKey="service"
+                tickLine={false}
+                tickMargin={10}
+                axisLine={false}
+              />
+              <YAxis 
+                  tickFormatter={(value) => `R$${value/1000}k`}
+              />
+              <ChartTooltip
+                cursor={false}
+                content={<ChartTooltipContent indicator="dot" />}
+              />
+              <Bar dataKey="profit" fill="var(--color-profit)" radius={8} />
+            </BarChart>
+          )}
         </ChartContainer>
       </CardContent>
     </Card>
