@@ -49,6 +49,7 @@ const serviceFormSchema = z.object({
   name: z.string().min(1, 'O nome do serviço é obrigatório.'),
   description: z.string().optional(),
   price: z.coerce.number().min(0, 'O preço deve ser um número positivo.'),
+  endDate: z.date().optional(),
 });
 
 const clientFormSchema = z.object({
@@ -102,7 +103,13 @@ const BottomNavbar = () => {
   async function onServiceSubmit(values: z.infer<typeof serviceFormSchema>) {
     if (!user || !firestore) return;
     const servicesCollection = collection(firestore, `users/${user.uid}/services`);
-    addDocumentNonBlocking(servicesCollection, values);
+    
+    const serviceData: any = { ...values };
+    if (values.endDate) {
+      serviceData.endDate = Timestamp.fromDate(values.endDate);
+    }
+    
+    addDocumentNonBlocking(servicesCollection, serviceData);
     toast({ title: 'Serviço Adicionado', description: `${values.name} foi adicionado.` });
     serviceForm.reset();
     setDialogOpen(false);
@@ -236,6 +243,44 @@ const BottomNavbar = () => {
                         </FormItem>
                       )}
                     />
+                    <FormField
+                        control={serviceForm.control}
+                        name="endDate"
+                        render={({ field }) => (
+                          <FormItem className="flex flex-col">
+                            <FormLabel>Data de Entrega (Opcional)</FormLabel>
+                            <Popover>
+                              <PopoverTrigger asChild>
+                                <FormControl>
+                                  <Button
+                                    variant={"outline"}
+                                    className={cn(
+                                      "w-full pl-3 text-left font-normal",
+                                      !field.value && "text-muted-foreground"
+                                    )}
+                                  >
+                                    {field.value ? (
+                                      format(field.value, "PPP")
+                                    ) : (
+                                      <span>Escolha uma data</span>
+                                    )}
+                                    <Calendar className="ml-auto h-4 w-4 opacity-50" />
+                                  </Button>
+                                </FormControl>
+                              </PopoverTrigger>
+                              <PopoverContent className="w-auto p-0" align="start">
+                                <CalendarPicker
+                                  mode="single"
+                                  selected={field.value}
+                                  onSelect={field.onChange}
+                                  initialFocus
+                                />
+                              </PopoverContent>
+                            </Popover>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
                     <DialogFooter className="justify-center">
                        <DialogClose asChild><Button type="button" variant="secondary">Cancelar</Button></DialogClose>
                       <Button type="submit">Adicionar Serviço</Button>
