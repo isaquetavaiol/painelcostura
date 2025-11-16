@@ -1,14 +1,14 @@
 'use client';
 
 import { useState, useMemo } from 'react';
-import { Calendar } from '@/components/ui/calendar';
 import { useUser, useFirestore, useCollection, useMemoFirebase } from '@/firebase';
 import { collection, Timestamp } from 'firebase/firestore';
 import BottomNavbar from '@/components/dashboard/bottom-navbar';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { format, isSameDay } from 'date-fns';
-import ptBR from 'date-fns/locale/pt-BR';
+import { ptBR } from 'date-fns/locale/pt-BR';
+import CustomCalendar from '@/components/custom-calendar';
 
 interface Project {
   id: string;
@@ -72,29 +72,12 @@ export default function CalendarPage() {
 
   return (
     <div className="flex min-h-screen w-full flex-col">
-      <main className="flex flex-1 flex-col items-center justify-center space-y-6 p-4 pt-6 pb-28 md:p-8 md:pb-8">
-        <div className="w-full max-w-md">
-            <Card>
-              <CardContent className="flex justify-center p-2 md:p-4">
-                <Calendar
-                  mode="single"
-                  selected={date}
-                  onSelect={setDate}
-                  className="rounded-md"
-                  locale={ptBR}
-                  modifiers={{
-                    delivery: deliveryDays || [],
-                  }}
-                  modifiersStyles={{
-                    delivery: {
-                      color: 'hsl(var(--primary-foreground))',
-                      backgroundColor: 'hsl(var(--primary))',
-                    },
-                  }}
-                />
-              </CardContent>
-            </Card>
-        </div>
+      <main className="flex flex-1 flex-col items-center space-y-6 p-4 pt-6 pb-28 md:p-8 md:pb-8">
+        <CustomCalendar
+            selected={date}
+            onSelect={(d) => setDate(d)}
+            deliveryDays={deliveryDays}
+        />
         
         {date && (
            <div className="w-full max-w-md">
