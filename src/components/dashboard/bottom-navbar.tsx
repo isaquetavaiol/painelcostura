@@ -8,6 +8,7 @@ import {
   DollarSign,
   Plus,
   UserPlus,
+  ArrowDown,
 } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
@@ -38,9 +39,13 @@ import * as z from 'zod';
 import { useState } from 'react';
 import { useFirestore, useUser } from '@/firebase';
 import { addDocumentNonBlocking } from '@/firebase/non-blocking-updates';
-import { collection, serverTimestamp } from 'firebase/firestore';
+import { collection, serverTimestamp, Timestamp } from 'firebase/firestore';
 import { useToast } from '@/hooks/use-toast';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
+import { CalendarIcon } from 'lucide-react';
+import { format } from 'date-fns';
+import { Calendar } from '../ui/calendar';
 
 const serviceFormSchema = z.object({
   name: z.string().min(1, 'O nome do serviço é obrigatório.'),
@@ -56,6 +61,12 @@ const clientFormSchema = z.object({
 const projectFormSchema = z.object({
   name: z.string().min(1, 'O nome do projeto é obrigatório.'),
   description: z.string().optional(),
+});
+
+const revenueFormSchema = z.object({
+  description: z.string().optional(),
+  amount: z.coerce.number().min(0, 'O valor deve ser um número positivo.'),
+  date: z.date({ required_error: 'A data é obrigatória.' }),
 });
 
 
@@ -80,12 +91,18 @@ const BottomNavbar = () => {
     resolver: zodResolver(projectFormSchema),
     defaultValues: { name: '', description: '' },
   });
+  
+  const revenueForm = useForm<z.infer<typeof revenueFormSchema>>({
+    resolver: zodResolver(revenueFormSchema),
+    defaultValues: { amount: 0, description: '' },
+  });
 
   const navLinks = [
     { href: '/', icon: <LayoutGrid className="w-6 h-6" /> },
     { href: '/projects', icon: <FolderKanban className="w-6 h-6" /> },
     { href: '/services', icon: <Scissors className="w-6 h-6" /> },
     { href: '/revenue', icon: <DollarSign className="w-6 h-6" /> },
+    { href: '/expenses', icon: <ArrowDown className="w-6 h-6" /> },
     { href: '/clients', icon: <UserPlus className="w-6 h-6" /> },
     { href: '/profile', icon: <User className="w-6 h-6" /> },
   ];
@@ -124,6 +141,19 @@ const BottomNavbar = () => {
     setDialogOpen(false);
   }
 
+  async function onRevenueSubmit(values: z.infer<typeof revenueFormSchema>) {
+    if (!user || !firestore) return;
+    const revenuesCollection = collection(firestore, `users/${user.uid}/revenues`);
+    addDocumentNonBlocking(revenuesCollection, {
+      ...values,
+      date: Timestamp.fromDate(values.date),
+    });
+    toast({ title: 'Receita Adicionada', description: `Um novo registro de receita foi adicionado.` });
+    revenueForm.reset();
+    setDialogOpen(false);
+  }
+
+
   return (
     <div className="fixed bottom-4 left-1/2 -translate-x-1/2 w-auto z-50">
       <div className="bg-card/80 backdrop-blur-sm rounded-full p-2 flex items-center justify-around border gap-1">
@@ -156,10 +186,11 @@ const BottomNavbar = () => {
           </DialogTrigger>
           <DialogContent className="sm:max-w-[425px]">
             <Tabs defaultValue="service" className="w-full">
-              <TabsList className="grid w-full grid-cols-3">
-                <TabsTrigger value="service">Novo Serviço</TabsTrigger>
-                <TabsTrigger value="client">Novo Cliente</TabsTrigger>
-                <TabsTrigger value="project">Novo Projeto</TabsTrigger>
+              <TabsList className="grid w-full grid-cols-4">
+                <TabsTrigger value="service">Serviço</TabsTrigger>
+                <TabsTrigger value="client">Cliente</TabsTrigger>
+                <TabsTrigger value="project">Projeto</TabsTrigger>
+                <TabsTrigger value="revenue">Receita</TabsTrigger>
               </TabsList>
               <TabsContent value="service">
                 <DialogHeader className="text-center">
@@ -299,6 +330,92 @@ const BottomNavbar = () => {
                     <DialogFooter className="justify-center">
                       <DialogClose asChild><Button type="button" variant="secondary">Cancelar</Button></DialogClose>
                       <Button type="submit">Adicionar Projeto</Button>
+                    </DialogFooter>
+                  </form>
+                </Form>
+              </TabsContent>
+               <TabsContent value="revenue">
+                <DialogHeader className="text-center">
+                  <DialogTitle>Adicionar Nova Receita</DialogTitle>
+                  <DialogDescription>
+                    Preencha os detalhes do novo registro de receita.
+                  </DialogDescription>
+                </DialogHeader>
+                <Form {...revenueForm}>
+                  <form onSubmit={revenueForm.handleSubmit(onRevenueSubmit)} className="space-y-4 py-4">
+                    <FormField
+                      control={revenueForm.control}
+                      name="amount"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Valor (R$)</FormLabel>
+                          <FormControl>
+                            <Input type="number" placeholder="ex: 150,00" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={revenueForm.control}
+                      name="date"
+                      render={({ field }) => (
+                        <FormItem className="flex flex-col">
+                          <FormLabel>Data da Receita</FormLabel>
+                          <Popover>
+                            <PopoverTrigger asChild>
+                              <FormControl>
+                                <Button
+                                  variant={"outline"}
+                                  className={cn(
+                                    "w-full pl-3 text-left font-normal",
+                                    !field.value && "text-muted-foreground"
+                                  )}
+                                >
+                                  {field.value ? (
+                                    format(field.value, "PPP")
+                                  ) : (
+                                    <span>Escolha uma data</span>
+                                  )}
+                                  <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                                </Button>
+                              </FormControl>
+                            </PopoverTrigger>
+                            <PopoverContent className="w-auto p-0" align="start">
+                              <Calendar
+                                mode="single"
+                                selected={field.value}
+                                onSelect={field.onChange}
+                                disabled={(date) =>
+                                  date > new Date() || date < new Date("1900-01-01")
+                                }
+                                initialFocus
+                              />
+                            </PopoverContent>
+                          </Popover>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={revenueForm.control}
+                      name="description"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Descrição (Opcional)</FormLabel>
+                          <FormControl>
+                            <Textarea
+                              placeholder="Descreva a origem da receita..."
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <DialogFooter className="justify-center">
+                       <DialogClose asChild><Button type="button" variant="secondary">Cancelar</Button></DialogClose>
+                      <Button type="submit">Adicionar Receita</Button>
                     </DialogFooter>
                   </form>
                 </Form>
