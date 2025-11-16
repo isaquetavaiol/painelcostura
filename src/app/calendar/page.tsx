@@ -72,56 +72,60 @@ export default function CalendarPage() {
 
   return (
     <div className="flex min-h-screen w-full flex-col">
-      <main className="flex flex-1 flex-col items-center space-y-6 p-4 pt-6 pb-28 md:p-8 md:pb-8">
-        <Card className="w-full max-w-md">
-          <CardContent className="p-2 md:p-4">
-            <Calendar
-              mode="single"
-              selected={date}
-              onSelect={setDate}
-              className="rounded-md"
-              locale={ptBR}
-              modifiers={{
-                delivery: deliveryDays || [],
-              }}
-              modifiersStyles={{
-                delivery: {
-                  color: 'hsl(var(--primary-foreground))',
-                  backgroundColor: 'hsl(var(--primary))',
-                },
-              }}
-            />
-          </CardContent>
-        </Card>
+      <main className="flex flex-1 flex-col items-center justify-center space-y-6 p-4 pt-6 pb-28 md:p-8 md:pb-8">
+        <div className="w-full max-w-md">
+            <Card>
+              <CardContent className="flex justify-center p-2 md:p-4">
+                <Calendar
+                  mode="single"
+                  selected={date}
+                  onSelect={setDate}
+                  className="rounded-md"
+                  locale={ptBR}
+                  modifiers={{
+                    delivery: deliveryDays || [],
+                  }}
+                  modifiersStyles={{
+                    delivery: {
+                      color: 'hsl(var(--primary-foreground))',
+                      backgroundColor: 'hsl(var(--primary))',
+                    },
+                  }}
+                />
+              </CardContent>
+            </Card>
+        </div>
         
         {date && (
-           <Card className="w-full max-w-md">
-            <CardHeader>
-              <CardTitle>
-                Entregas para {format(date, "dd 'de' MMMM", { locale: ptBR })}
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-2">
-                {!hasDeliveries ? (
-                     <p className="text-muted-foreground">Nenhuma entrega para este dia.</p>
-                ) : (
-                    <>
-                        {selectedDayProjects.map(project => (
-                            <div key={project.id} className="flex items-center justify-between rounded-md bg-muted p-3">
-                            <p className="font-medium">{project.name}</p>
-                            <Badge variant="default">Projeto</Badge>
-                            </div>
-                        ))}
-                         {selectedDayServices.map(service => (
-                            <div key={service.id} className="flex items-center justify-between rounded-md bg-muted p-3">
-                            <p className="font-medium">{service.name}</p>
-                            <Badge variant="secondary">Serviço</Badge>
-                            </div>
-                        ))}
-                    </>
-                )}
-            </CardContent>
-          </Card>
+           <div className="w-full max-w-md">
+            <Card>
+                <CardHeader>
+                <CardTitle>
+                    Entregas para {format(date, "dd 'de' MMMM", { locale: ptBR })}
+                </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-2">
+                    {!hasDeliveries ? (
+                        <p className="text-muted-foreground">Nenhuma entrega para este dia.</p>
+                    ) : (
+                        <>
+                            {selectedDayProjects.map(project => (
+                                <div key={project.id} className="flex items-center justify-between rounded-md bg-muted p-3">
+                                <p className="font-medium">{project.name}</p>
+                                <Badge variant="default">Projeto</Badge>
+                                </div>
+                            ))}
+                            {selectedDayServices.map(service => (
+                                <div key={service.id} className="flex items-center justify-between rounded-md bg-muted p-3">
+                                <p className="font-medium">{service.name}</p>
+                                <Badge variant="secondary">Serviço</Badge>
+                                </div>
+                            ))}
+                        </>
+                    )}
+                </CardContent>
+            </Card>
+           </div>
         )}
       </main>
       <BottomNavbar />
