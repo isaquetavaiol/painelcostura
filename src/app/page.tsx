@@ -1,7 +1,6 @@
 'use client';
 
 import ServiceProfitChart from '@/components/dashboard/service-profit-chart';
-import RevenueGrowthChart from '@/components/dashboard/revenue-growth-chart';
 import Alerts from '@/components/dashboard/alerts';
 import PriceSimulator from '@/components/dashboard/price-simulator';
 import BottomNavbar from '@/components/dashboard/bottom-navbar';
@@ -31,11 +30,8 @@ export default function DashboardPage() {
     <div className="flex min-h-screen w-full flex-col">
       <main className="flex-1 space-y-6 p-4 md:p-8 pt-6 pb-28 md:pb-8">
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-7">
-          <div className="lg:col-span-4 md:col-span-1">
+          <div className="lg:col-span-7 md:col-span-1">
             <ServiceProfitChart />
-          </div>
-          <div className="lg:col-span-3 md:col-span-1">
-            <RevenueGrowthChart />
           </div>
         </div>
          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-7">
