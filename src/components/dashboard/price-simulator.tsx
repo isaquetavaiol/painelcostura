@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Calculator, Copy } from 'lucide-react';
+import { Copy, Percent } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 const CalculatorComponent = () => {
@@ -18,13 +18,16 @@ const CalculatorComponent = () => {
       setExpression(value);
       return;
     }
-    if (display === '0' && value !== '.') {
+    
+    // If an operator was the last thing typed, start a new display
+    if (['+', '-', '*', '/'].includes(display)) {
+        setDisplay(value);
+    } else if (display === '0' && value !== '.') {
       setDisplay(value);
-      setExpression(prev => prev + value);
     } else {
-      setDisplay(prev => prev + value);
-      setExpression(prev => prev + value);
+      setDisplay(prev => (prev.length < 12 ? prev + value : prev));
     }
+    setExpression(prev => prev + value);
   };
 
   const handleOperator = (operator: string) => {
@@ -44,6 +47,7 @@ const CalculatorComponent = () => {
   };
 
   const calculateResult = () => {
+    if (display === 'Error' || expression === '') return;
     try {
       // eslint-disable-next-line no-eval
       const result = eval(expression.replace(/--/g, '+'));
@@ -58,6 +62,31 @@ const CalculatorComponent = () => {
       setExpression('');
     }
   };
+
+  const handlePercentage = () => {
+    if (display === 'Error' || display === '0') return;
+    try {
+      const currentValue = parseFloat(display);
+      const result = currentValue / 100;
+      const resultString = result.toString();
+      
+      // Heuristic to replace the last number in expression with its percentage value
+      const match = expression.match(/(\d+\.?\d*)$/);
+      if (match) {
+        const lastNumber = match[0];
+        const newExpression = expression.slice(0, -lastNumber.length) + resultString;
+        setExpression(newExpression);
+      } else {
+        setExpression(resultString);
+      }
+      
+      setDisplay(resultString);
+
+    } catch (error) {
+      setDisplay('Error');
+      setExpression('');
+    }
+  }
   
   const copyToClipboard = () => {
     if (display !== 'Error' && display !== '0') {
@@ -68,26 +97,6 @@ const CalculatorComponent = () => {
       });
     }
   };
-
-
-  const buttons = [
-    { label: '7', action: () => handleInput('7') },
-    { label: '8', action: () => handleInput('8') },
-    { label: '9', action: () => handleInput('9') },
-    { label: '/', action: () => handleOperator('/') },
-    { label: '4', action: () => handleInput('4') },
-    { label: '5', action: () => handleInput('5') },
-    { label: '6', action: () => handleInput('6') },
-    { label: '*', action: () => handleOperator('*') },
-    { label: '1', action: () => handleInput('1') },
-    { label: '2', action: () => handleInput('2') },
-    { label: '3', action: () => handleInput('3') },
-    { label: '-', action: () => handleOperator('-') },
-    { label: '0', action: () => handleInput('0') },
-    { label: '.', action: () => handleInput('.') },
-    { label: '=', action: calculateResult, className: 'col-span-2' },
-    { label: '+', action: () => handleOperator('+') },
-  ];
 
   return (
     <Card className="h-full flex flex-col animate-card-in" style={{ animationDelay: '500ms', animationFillMode: 'backwards' }}>
@@ -104,22 +113,31 @@ const CalculatorComponent = () => {
           />
         </div>
         <div className="grid grid-cols-4 gap-2 flex-grow">
-          {buttons.map(btn => (
-            <Button
-              key={btn.label}
-              onClick={btn.action}
-              variant={['/', '*', '-', '+', '='].includes(btn.label) ? 'default' : 'secondary'}
-              className={`h-full text-xl ${btn.className || ''}`}
-            >
-              {btn.label}
-            </Button>
-          ))}
+            <Button onClick={clearDisplay} variant="destructive" className="h-full text-xl col-span-2">Limpar</Button>
+            <Button onClick={handlePercentage} variant="default" className="h-full text-xl"><Percent className="w-5 h-5"/></Button>
+            <Button onClick={() => handleOperator('/')} variant="default" className="h-full text-xl">/</Button>
+
+            <Button onClick={() => handleInput('7')} variant="secondary" className="h-full text-xl">7</Button>
+            <Button onClick={() => handleInput('8')} variant="secondary" className="h-full text-xl">8</Button>
+            <Button onClick={() => handleInput('9')} variant="secondary" className="h-full text-xl">9</Button>
+            <Button onClick={() => handleOperator('*')} variant="default" className="h-full text-xl">*</Button>
+
+            <Button onClick={() => handleInput('4')} variant="secondary" className="h-full text-xl">4</Button>
+            <Button onClick={() => handleInput('5')} variant="secondary" className="h-full text-xl">5</Button>
+            <Button onClick={() => handleInput('6')} variant="secondary" className="h-full text-xl">6</Button>
+            <Button onClick={() => handleOperator('-')} variant="default" className="h-full text-xl">-</Button>
+
+            <Button onClick={() => handleInput('1')} variant="secondary" className="h-full text-xl">1</Button>
+            <Button onClick={() => handleInput('2')} variant="secondary" className="h-full text-xl">2</Button>
+            <Button onClick={() => handleInput('3')} variant="secondary" className="h-full text-xl">3</Button>
+            <Button onClick={() => handleOperator('+')} variant="default" className="h-full text-xl">+</Button>
+
+            <Button onClick={() => handleInput('0')} variant="secondary" className="h-full text-xl col-span-2">0</Button>
+            <Button onClick={() => handleInput('.')} variant="secondary" className="h-full text-xl">.</Button>
+            <Button onClick={calculateResult} variant="default" className="h-full text-xl">=</Button>
         </div>
       </CardContent>
-      <CardFooter className="grid grid-cols-2 gap-2">
-         <Button onClick={clearDisplay} variant="outline" className="w-full">
-            Limpar
-          </Button>
+      <CardFooter>
         <Button onClick={copyToClipboard} className="w-full">
           <Copy className="mr-2 h-4 w-4" />
           Copiar Resultado
