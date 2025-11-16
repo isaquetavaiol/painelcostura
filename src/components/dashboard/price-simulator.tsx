@@ -113,7 +113,7 @@ const CalculatorComponent = () => {
           />
         </div>
         <div className="grid grid-cols-4 gap-2 flex-grow">
-            <Button onClick={clearDisplay} variant="destructive" className="h-full text-xl col-span-2">Limpar</Button>
+            <Button onClick={clearDisplay} variant="secondary" className="h-full text-xl col-span-2">Limpar</Button>
             <Button onClick={handlePercentage} variant="default" className="h-full text-xl"><Percent className="w-5 h-5"/></Button>
             <Button onClick={() => handleOperator('/')} variant="default" className="h-full text-xl">/</Button>
 
