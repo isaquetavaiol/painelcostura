@@ -64,29 +64,36 @@ const CalculatorComponent = () => {
   };
 
   const handlePercentage = () => {
-    if (display === 'Error' || display === '0') return;
+    if (display === 'Error' || expression === '') return;
     try {
-      const currentValue = parseFloat(display);
-      const result = currentValue / 100;
-      const resultString = result.toString();
-      
-      // Heuristic to replace the last number in expression with its percentage value
-      const match = expression.match(/(\d+\.?\d*)$/);
-      if (match) {
-        const lastNumber = match[0];
-        const newExpression = expression.slice(0, -lastNumber.length) + resultString;
-        setExpression(newExpression);
-      } else {
-        setExpression(resultString);
-      }
-      
-      setDisplay(resultString);
+        // Regex to find the last number and optional preceding operator and number
+        const match = expression.match(/((\d+\.?\d*)([+\-*/]))?(\d+\.?\d*)$/);
+        if (match) {
+            const [fullMatch, , prevNumber, operator, currentNumberStr] = match;
+            const currentNumber = parseFloat(currentNumberStr);
 
+            let result;
+            // If there's a preceding number and an operator (e.g., "200+10"), calculate percentage based on it
+            if (prevNumber && operator && (operator === '+' || operator === '-')) {
+                const baseValue = parseFloat(prevNumber);
+                result = baseValue * (currentNumber / 100);
+            } else {
+                // Otherwise, just calculate the percentage of the current number (e.g., "10" becomes "0.1")
+                result = currentNumber / 100;
+            }
+
+            const resultString = result.toString();
+            // Replace the last number in the expression with the calculated percentage value
+            const newExpression = expression.slice(0, -currentNumberStr.length) + resultString;
+            
+            setExpression(newExpression);
+            setDisplay(resultString);
+        }
     } catch (error) {
-      setDisplay('Error');
-      setExpression('');
+        setDisplay('Error');
+        setExpression('');
     }
-  }
+  };
   
   const copyToClipboard = () => {
     if (display !== 'Error' && display !== '0') {
