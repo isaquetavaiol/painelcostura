@@ -7,6 +7,7 @@ import {
   Scissors,
   Plus,
   UserPlus,
+  Calendar,
 } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
@@ -37,9 +38,12 @@ import * as z from 'zod';
 import { useState } from 'react';
 import { useFirestore, useUser } from '@/firebase';
 import { addDocumentNonBlocking } from '@/firebase/non-blocking-updates';
-import { collection, serverTimestamp } from 'firebase/firestore';
+import { collection, serverTimestamp, Timestamp } from 'firebase/firestore';
 import { useToast } from '@/hooks/use-toast';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Calendar as CalendarPicker } from '@/components/ui/calendar';
+import { format } from 'date-fns';
 
 const serviceFormSchema = z.object({
   name: z.string().min(1, 'O nome do serviço é obrigatório.'),
@@ -55,6 +59,7 @@ const clientFormSchema = z.object({
 const projectFormSchema = z.object({
   name: z.string().min(1, 'O nome do projeto é obrigatório.'),
   description: z.string().optional(),
+  endDate: z.date().optional(),
 });
 
 
@@ -83,13 +88,15 @@ const BottomNavbar = () => {
   const navLinks = [
     { href: '/', icon: <LayoutGrid className="w-6 h-6" /> },
     { href: '/projects', icon: <FolderKanban className="w-6 h-6" /> },
+    { href: '/calendar', icon: <Calendar className="w-6 h-6" /> },
     { href: '/services', icon: <Scissors className="w-6 h-6" /> },
     { href: '/clients', icon: <UserPlus className="w-6 h-6" /> },
     { href: '/profile', icon: <User className="w-6 h-6" /> },
   ];
 
   const leftLinks = navLinks.slice(0, 2);
-  const rightLinks = navLinks.slice(2);
+  const centerLink = navLinks[2];
+  const rightLinks = navLinks.slice(3);
 
 
   async function onServiceSubmit(values: z.infer<typeof serviceFormSchema>) {
@@ -113,10 +120,17 @@ const BottomNavbar = () => {
   async function onProjectSubmit(values: z.infer<typeof projectFormSchema>) {
     if (!user || !firestore) return;
     const projectsCollection = collection(firestore, `users/${user.uid}/projects`);
-    addDocumentNonBlocking(projectsCollection, {
+    
+    const projectData: any = {
       ...values,
       startDate: serverTimestamp(),
-    });
+    };
+
+    if (values.endDate) {
+      projectData.endDate = Timestamp.fromDate(values.endDate);
+    }
+
+    addDocumentNonBlocking(projectsCollection, projectData);
     toast({ title: 'Projeto Adicionado', description: `${values.name} foi adicionado.` });
     projectForm.reset();
     setDialogOpen(false);
@@ -141,6 +155,21 @@ const BottomNavbar = () => {
             </Link>
           </Button>
         ))}
+
+        <Button 
+            key={centerLink.href}
+            variant="ghost"
+            size="icon"
+            className={cn(
+              'rounded-full w-12 h-12',
+              pathname === centerLink.href ? 'bg-primary/20 text-primary' : 'text-muted-foreground'
+            )}
+            asChild
+          >
+            <Link href={centerLink.href}>
+              {centerLink.icon}
+            </Link>
+          </Button>
 
         <Dialog open={isDialogOpen} onOpenChange={setDialogOpen}>
           <DialogTrigger asChild>
@@ -294,6 +323,44 @@ const BottomNavbar = () => {
                         </FormItem>
                       )}
                     />
+                     <FormField
+                        control={projectForm.control}
+                        name="endDate"
+                        render={({ field }) => (
+                          <FormItem className="flex flex-col">
+                            <FormLabel>Data de Entrega (Opcional)</FormLabel>
+                            <Popover>
+                              <PopoverTrigger asChild>
+                                <FormControl>
+                                  <Button
+                                    variant={"outline"}
+                                    className={cn(
+                                      "w-full pl-3 text-left font-normal",
+                                      !field.value && "text-muted-foreground"
+                                    )}
+                                  >
+                                    {field.value ? (
+                                      format(field.value, "PPP")
+                                    ) : (
+                                      <span>Escolha uma data</span>
+                                    )}
+                                    <Calendar className="ml-auto h-4 w-4 opacity-50" />
+                                  </Button>
+                                </FormControl>
+                              </PopoverTrigger>
+                              <PopoverContent className="w-auto p-0" align="start">
+                                <CalendarPicker
+                                  mode="single"
+                                  selected={field.value}
+                                  onSelect={field.onChange}
+                                  initialFocus
+                                />
+                              </PopoverContent>
+                            </Popover>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
                     <DialogFooter className="justify-center">
                       <DialogClose asChild><Button type="button" variant="secondary">Cancelar</Button></DialogClose>
                       <Button type="submit">Adicionar Projeto</Button>

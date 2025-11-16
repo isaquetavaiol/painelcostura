@@ -14,20 +14,26 @@ import { Textarea } from '@/components/ui/textarea';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
-import { FolderKanban, Pencil, Trash2 } from 'lucide-react';
+import { FolderKanban, Pencil, Trash2, Calendar as CalendarIcon } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Calendar } from '@/components/ui/calendar';
+import { format } from 'date-fns';
+
 
 interface Project {
   id: string;
   name: string;
   description?: string;
   startDate: Timestamp;
+  endDate?: Timestamp;
 }
 
 const projectFormSchema = z.object({
   name: z.string().min(1, 'O nome do projeto é obrigatório.'),
   description: z.string().optional(),
+  endDate: z.date().optional(),
 });
 
 export default function ProjectsPage() {
@@ -54,6 +60,7 @@ export default function ProjectsPage() {
     form.reset({
       name: project.name,
       description: project.description,
+      endDate: project.endDate?.toDate(),
     });
     setEditDialogOpen(true);
   };
@@ -72,7 +79,18 @@ export default function ProjectsPage() {
     if (!user || !firestore || !selectedProject) return;
 
     const projectDocRef = doc(firestore, `users/${user.uid}/projects/${selectedProject.id}`);
-    updateDocumentNonBlocking(projectDocRef, values);
+    
+    const projectData: any = {
+      ...values,
+    };
+
+    if (values.endDate) {
+      projectData.endDate = Timestamp.fromDate(values.endDate);
+    } else {
+      projectData.endDate = null;
+    }
+    
+    updateDocumentNonBlocking(projectDocRef, projectData);
     
     toast({
       title: 'Projeto Atualizado',
@@ -109,10 +127,16 @@ export default function ProjectsPage() {
                   <CardTitle className="truncate">{project.name}</CardTitle>
                   {project.description && <CardDescription className="line-clamp-2 h-[40px]">{project.description}</CardDescription>}
                 </CardHeader>
-                <CardContent className="flex-grow">
+                <CardContent className="flex-grow space-y-2">
                    <p className="text-sm text-muted-foreground">
                         Iniciado em: {project.startDate?.toDate().toLocaleDateString('pt-BR') || 'N/A'}
                     </p>
+                    {project.endDate && (
+                      <p className="text-sm text-muted-foreground flex items-center">
+                        <CalendarIcon className="mr-2 h-4 w-4" />
+                        Entrega: {project.endDate?.toDate().toLocaleDateString('pt-BR')}
+                      </p>
+                    )}
                 </CardContent>
                 <CardFooter className="gap-2">
                     <Button variant="outline" size="icon" onClick={() => handleEditClick(project)}>
@@ -184,6 +208,44 @@ export default function ProjectsPage() {
                     </FormItem>
                   )}
                 />
+                 <FormField
+                    control={form.control}
+                    name="endDate"
+                    render={({ field }) => (
+                      <FormItem className="flex flex-col">
+                        <FormLabel>Data de Entrega (Opcional)</FormLabel>
+                        <Popover>
+                          <PopoverTrigger asChild>
+                            <FormControl>
+                              <Button
+                                variant={"outline"}
+                                className={cn(
+                                  "w-full pl-3 text-left font-normal",
+                                  !field.value && "text-muted-foreground"
+                                )}
+                              >
+                                {field.value ? (
+                                  format(field.value, "PPP")
+                                ) : (
+                                  <span>Escolha uma data</span>
+                                )}
+                                <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                              </Button>
+                            </FormControl>
+                          </PopoverTrigger>
+                          <PopoverContent className="w-auto p-0" align="start">
+                            <Calendar
+                              mode="single"
+                              selected={field.value}
+                              onSelect={field.onChange}
+                              initialFocus
+                            />
+                          </PopoverContent>
+                        </Popover>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
                 <DialogFooter>
                   <DialogClose asChild>
                     <Button type="button" variant="secondary">Cancelar</Button>
