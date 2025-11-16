@@ -2,7 +2,7 @@
 
 import ServiceProfitChart from '@/components/dashboard/service-profit-chart';
 import Alerts from '@/components/dashboard/alerts';
-import PriceSimulator from '@/components/dashboard/price-simulator';
+import CalculatorComponent from '@/components/dashboard/price-simulator';
 import BottomNavbar from '@/components/dashboard/bottom-navbar';
 import { useUser } from '@/firebase';
 import { useRouter } from 'next/navigation';
@@ -39,7 +39,7 @@ export default function DashboardPage() {
              <Alerts />
            </div>
            <div className="lg:col-span-4 md:col-span-1">
-             <PriceSimulator />
+             <CalculatorComponent />
            </div>
          </div>
       </main>
