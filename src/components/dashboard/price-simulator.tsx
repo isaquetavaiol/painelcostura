@@ -64,34 +64,54 @@ const CalculatorComponent = () => {
   };
 
   const handlePercentage = () => {
-    if (display === 'Error' || expression === '') return;
+    if (display === 'Error' || !expression) return;
+  
     try {
-        // Regex to find the last number and optional preceding operator and number
-        const match = expression.match(/((\d+\.?\d*)([+\-*/]))?(\d+\.?\d*)$/);
-        if (match) {
-            const [fullMatch, , prevNumber, operator, currentNumberStr] = match;
-            const currentNumber = parseFloat(currentNumberStr);
+      // Find the last number entered
+      const numberMatch = expression.match(/(\d+\.?\d*)$/);
+      if (!numberMatch) return;
+  
+      const lastNumberStr = numberMatch[0];
+      const lastNumber = parseFloat(lastNumberStr);
+      
+      // Find the part of the expression before the last number
+      const precedingExpression = expression.slice(0, expression.length - lastNumberStr.length);
+      
+      // Find the last operator and the number before it
+      const operatorMatch = precedingExpression.match(/([+\-*/])(\d+\.?\d*)$/);
+      
+      let newExpression;
 
-            let result;
-            // If there's a preceding number and an operator (e.g., "200+10"), calculate percentage based on it
-            if (prevNumber && operator && (operator === '+' || operator === '-')) {
-                const baseValue = parseFloat(prevNumber);
-                result = baseValue * (currentNumber / 100);
-            } else {
-                // Otherwise, just calculate the percentage of the current number (e.g., "10" becomes "0.1")
-                result = currentNumber / 100;
-            }
+      if (operatorMatch) {
+        const operator = operatorMatch[1];
+        const baseNumber = parseFloat(operatorMatch[2]);
+        const expressionWithoutBase = precedingExpression.slice(0, precedingExpression.length - operatorMatch[0].length);
 
-            const resultString = result.toString();
-            // Replace the last number in the expression with the calculated percentage value
-            const newExpression = expression.slice(0, -currentNumberStr.length) + resultString;
-            
-            setExpression(newExpression);
-            setDisplay(resultString);
+        if (operator === '+' || operator === '-') {
+            // e.g., "100+10%" becomes "100+10"
+            const percentageValue = baseNumber * (lastNumber / 100);
+            newExpression = `${expressionWithoutBase}${baseNumber}${operator}${percentageValue}`;
+        } else if (operator === '*' || operator === '/') {
+            // e.g., "100*10%" becomes "100*0.1"
+            const percentageValue = lastNumber / 100;
+            newExpression = `${precedingExpression}${percentageValue}`;
+        } else {
+          return;
         }
+      } else {
+        // Only one number, e.g., "50%". Treat it as "0.5"
+        newExpression = (lastNumber / 100).toString();
+      }
+      
+      // eslint-disable-next-line no-eval
+      const result = eval(newExpression);
+      const resultString = parseFloat(result.toPrecision(10)).toString();
+      setDisplay(resultString);
+      setExpression(resultString);
+
     } catch (error) {
-        setDisplay('Error');
-        setExpression('');
+      setDisplay('Error');
+      setExpression('');
     }
   };
   
