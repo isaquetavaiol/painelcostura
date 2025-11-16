@@ -1,1 +1,1 @@
-git# Firebase Studio Project
+ngit# Firebase Studio Project
